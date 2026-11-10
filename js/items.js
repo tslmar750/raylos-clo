@@ -70,7 +70,7 @@ function refreshItems(){
     box.innerHTML='<div class="boardscroll"><div class="board" id="board">'+STAGES.map(function(st){
       return '<div class="bcol '+st.c+'" data-stage="'+st.k+'"><h3 class="k">'+st.n+'<span>'+by[st.k].length+'</span></h3><div class="bbody">'+(by[st.k].length?by[st.k].map(function(i){return bcard(i,st.k)}).join(''):'<p class="none">'+st.e+'</p>')+'</div></div>';
     }).join('')+'</div></div><p class="boardmsg" id="boardMsg" aria-live="polite"></p>'+
-    '<p class="boardhint">Scroll inside a column to see more. Drag a card into To ship to mark it sold, or from To ship into Shipped. The buttons on each card do the same.</p>'+
+    '<p class="boardhint"><span class="hint-desk">Scroll inside a column to see more. Drag a card into To ship to mark it sold, or from To ship into Shipped. The buttons on each card do the same.</span><span class="hint-phone">Swipe left and right to see each stage. Use the buttons on a card to move it along.</span></p>'+
     (done?'<p class="boardfoot">'+plural(done,'finished sale')+' not shown here. <button class="linkbtn" data-action="go" data-view="sold-shipping" data-tab="history">See Sold History</button></p>':'');
     return;
   }

@@ -131,7 +131,6 @@ function openItem(id){
     '<div class="ff"><label for="f_brand">Brand</label><input type="text" id="f_brand" maxlength="60" value="'+esc(it?it.brand:'')+'"></div>'+
     '<div class="ff"><label for="f_color">Color</label><input type="text" id="f_color" maxlength="40" placeholder="e.g. black" value="'+esc(it?it.color:'')+'"></div>'+
     '<div class="ff"><label for="f_cond">Condition</label><select id="f_cond"><option value="">Not set</option>'+opt(['New with tags','Like new','Good','Fair'],it?it.condition:'')+'</select></div>'+
-    '<div class="ff"><label for="f_source">Where I got it</label><select id="f_source">'+opt(SOURCES,it?it.source:'My closet')+'</select></div>'+
     '<div class="ff"><label for="f_cost">What I paid ($)</label><input type="number" id="f_cost" min="0" step="0.01" value="'+esc(it&&it.cost!==''&&it.cost!=null?it.cost:'')+'"><div class="msg bad" id="m_cost" aria-live="polite"></div></div>'+
     '<div class="ff"><label for="f_price">Asking price ($)</label><input type="number" id="f_price" min="0" step="0.01" value="'+esc(it&&it.price!==''&&it.price!=null?it.price:'')+'"><div class="msg bad" id="m_price" aria-live="polite"></div></div>'+
     '<div class="ff full"><label for="f_notes">Notes, flaws, measurements</label><textarea id="f_notes" maxlength="800">'+esc(it?it.notes:'')+'</textarea></div>'+
@@ -176,7 +175,7 @@ function saveItem(){
   var links={};
   PLATFORMS.forEach(function(pl){var r=showLinkMsg(pl.key);if(!r.ok)ok=false;var v=$('#link_'+pl.key).value.trim();if(v)links[pl.key]=v});
   if(!ok){var bad=$('#itemDlg .msg.bad:not(:empty)');if(bad){var inp=bad.parentNode.querySelector('input');if(inp)inp.focus()}return}
-  var data={title:title,category:$('#f_cat').value,size:$('#f_size').value.trim(),brand:$('#f_brand').value.trim(),condition:$('#f_cond').value,color:$('#f_color').value.trim(),styleTags:$('#f_style').value.trim(),age:$('#f_age').value,pkg:$('#f_pkg').value,dsource:$('#f_dsource').value.trim(),source:$('#f_source').value,cost:cost===''?'':num(cost),price:price===''?'':num(price),notes:$('#f_notes').value.trim(),links:links};
+  var data={title:title,category:$('#f_cat').value,size:$('#f_size').value.trim(),brand:$('#f_brand').value.trim(),condition:$('#f_cond').value,color:$('#f_color').value.trim(),styleTags:$('#f_style').value.trim(),age:$('#f_age').value,pkg:$('#f_pkg').value,dsource:$('#f_dsource').value.trim(),cost:cost===''?'':num(cost),price:price===''?'':num(price),notes:$('#f_notes').value.trim(),links:links};
   var saved;
   if(editingId){var it=findItem(editingId);saved=it;Object.keys(data).forEach(function(k){it[k]=data[k]});
     // links removed after a sale no longer need delisting

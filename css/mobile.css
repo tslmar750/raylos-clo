@@ -2,8 +2,8 @@
    Everything that changes the layout lives inside the max-width:900px block,
    so desktop (901px and wider) looks exactly like before. */
 
-/* Short tab names are only for the phone tab bar */
-.nav .ns{display:none}
+/* Short tab names and phone hints are only for phones */
+.nav .ns,.hint-phone{display:none}
 
 html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
 
@@ -90,4 +90,69 @@ html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
 @media (max-width:900px) and (max-height:500px){
   :root{--tabbar-h:48px}
   .nav button{padding:2px}
+}
+
+/* ================= Step 3: each tab on a phone ================= */
+@media (max-width:900px){
+  /* shared cards and tiles: less padding, smaller giant numbers */
+  .card,.tile,.tablecard{padding:16px;border-radius:20px}
+  .card{margin-bottom:14px}
+  .card h2,.tile h2{font-size:clamp(28px,8vw,36px)}
+  .hero{margin:0 0 14px}
+  .hero h1.hello-text{font-size:60px}
+  .hero p{font-size:17px}
+  .top{margin-bottom:14px;gap:10px}
+  .lead{font-size:16px}
+
+  /* filter buttons: one row you can swipe sideways, instead of 2-3 rows */
+  .subtabs{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch;
+    margin-left:calc(-14px - var(--sal));margin-right:calc(-14px - var(--sar));
+    padding:2px calc(14px + var(--sar)) 4px calc(14px + var(--sal));scroll-padding-inline:14px}
+  .subtabs::-webkit-scrollbar{display:none}
+  .subtabs button{flex:none;white-space:nowrap}
+  .toolbar{gap:8px}
+  .toolbar input[type=search]{max-width:none;flex:1 1 100%}
+
+  /* ---- Dashboard ---- */
+  .bento{gap:12px}
+  .tile .big{font-size:56px}
+  .tile.ship .big{font-size:80px}
+  .tile.ship li{padding:8px 12px;font-size:16px;flex-wrap:wrap;row-gap:2px}
+  .tile.ship li b{font-size:15px}
+  .tile.attn{margin-bottom:12px}
+  .tile.attn li{padding:8px 10px 8px 12px;font-size:15px}
+  .tile.rack img{height:96px}
+  .tile.arrivals .pfs,.tile.earners .pfs{gap:10px}
+  .tile.earners .pfs{grid-template-columns:repeat(3,minmax(0,1fr))}
+  .pf .pt{font-size:14px}
+
+  /* ---- Items: board becomes swipeable columns, one stage per screen ---- */
+  .boardscroll{overflow-x:auto;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;
+    margin:0 calc(-14px - var(--sar)) 0 calc(-14px - var(--sal));
+    padding:0 calc(14px + var(--sar)) 8px calc(14px + var(--sal));scroll-padding-inline:14px;scrollbar-width:none}
+  .boardscroll::-webkit-scrollbar{display:none}
+  .board{display:flex;gap:10px;min-width:0;height:auto;align-items:flex-start}
+  .hint-desk{display:none}.hint-phone{display:inline}
+  .bcol{flex:0 0 86%;scroll-snap-align:start;overflow:visible}
+  .bcol::after{display:none}
+  .bcol h3{font-size:30px}
+  .bbody{overflow:visible;padding:10px 8px 6px}
+  .bcard .bmain .frame{width:72px}
+  /* Items list: let the page scroll instead of a small box inside it */
+  #itemsList .tablewrap{max-height:none;overflow:visible}
+  #itemsList th{top:calc(57px + var(--sat))}
+  td{padding:10px 6px}
+  th{padding:6px 6px 8px}
+
+  /* ---- Money: totals that fit ---- */
+  .stats{gap:10px;margin-bottom:14px}
+  .stats .card{padding:14px 12px}
+  .stat .label{font-size:15px}
+  .stat .num{font-size:clamp(22px,7.4vw,32px)}
+  .stat .hint{font-size:13px}
+  .card::before{width:70px;height:70px;right:-26px;top:-26px}
+  .hrow{gap:4px 10px}
+
+  /* ---- Settings ---- */
+  .settings-grid{gap:12px}
 }

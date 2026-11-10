@@ -2,12 +2,13 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Raylos’Clo</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;700&display=swap">
 <link rel="stylesheet" href="css/app.css">
+<link rel="stylesheet" href="css/mobile.css">
 </head>
 <body>
 
@@ -49,12 +50,12 @@
     <div class="ah-right"><button type="button" id="logoutBtn">Log out</button></div>
   </header>
   <nav class="nav" aria-label="Main">
-    <button data-view="dashboard">Dashboard</button>
-    <button data-view="items">Items</button>
-    <button data-view="sold-shipping">Sold <span class="amp">&amp;</span> Shipping<span class="badge" data-badge="ship" hidden></span><span class="badge hot" data-badge="delist" hidden></span></button>
-    <button data-view="money">Money</button>
-    <button data-view="notifications">Notifications<span class="badge" data-badge="notes" hidden></span></button>
-    <button data-view="settings">Settings</button>
+    <button data-view="dashboard"><span class="nl">Dashboard</span><span class="ns" aria-hidden="true">Home</span></button>
+    <button data-view="items"><span class="nl">Items</span><span class="ns" aria-hidden="true">Items</span></button>
+    <button data-view="sold-shipping"><span class="nl">Sold <span class="amp">&amp;</span> Shipping</span><span class="ns" aria-hidden="true">Sold</span><span class="nb"><span class="badge" data-badge="ship" hidden></span><span class="badge hot" data-badge="delist" hidden></span></span></button>
+    <button data-view="money"><span class="nl">Money</span><span class="ns" aria-hidden="true">Money</span></button>
+    <button data-view="notifications"><span class="nl">Notifications</span><span class="ns" aria-hidden="true">Alerts</span><span class="nb"><span class="badge" data-badge="notes" hidden></span></span></button>
+    <button data-view="settings"><span class="nl">Settings</span><span class="ns" aria-hidden="true">Settings</span></button>
   </nav>
   <div class="main" id="mainArea">
     <section data-panel="dashboard"></section>

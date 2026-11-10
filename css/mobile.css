@@ -156,3 +156,9 @@ html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
   /* ---- Settings ---- */
   .settings-grid{gap:12px}
 }
+
+@media (max-width:900px){
+  .bgchip{min-height:44px;padding:6px 14px 6px 8px}
+  /* bigger photo preview so you can see the background result */
+  .photobox .frame.big{width:min(240px,72%);align-self:center}
+}

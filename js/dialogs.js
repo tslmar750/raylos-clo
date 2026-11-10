@@ -88,6 +88,7 @@ function updatePhotoUI(){
   pv.className='frame big'+(src?'':' noph');
   pv.innerHTML=src?'<img src="'+src+'" alt="Photo preview">':'<img src="'+IMG[iconFor(cat)]+'" alt=""><span>No photo yet</span>';
   $('#photoBtn').textContent=src?'Change photo':'Add photo'; $('#photoRm').hidden=!src;
+  bgUI();
 }
 function handlePhotoFile(file){
   var m=$('#m_photo'); if(!m)return; m.textContent=''; if(!file)return;
@@ -95,7 +96,7 @@ function handlePhotoFile(file){
     if(!isImg){m.textContent='That file isn’t a picture. Photos from your Mac or iPhone (HEIC, JPG, PNG, WebP, GIF) all work.';return}
     if(file.size>40*1024*1024){m.textContent='That picture is very large. Choose one under 40 MB.';return}
     m.textContent='Preparing the picture…';
-    return resizeImage(file,900,function(t){m.textContent=t}).then(function(blob){if(pendingPhoto)URL.revokeObjectURL(pendingPhoto.url);pendingPhoto={blob:blob,url:URL.createObjectURL(blob)};removePhotoFlag=false;m.textContent='';updatePhotoUI()});
+    return resizeImage(file,900,function(t){m.textContent=t}).then(function(blob){if(pendingPhoto)URL.revokeObjectURL(pendingPhoto.url);pendingPhoto={blob:blob,url:URL.createObjectURL(blob)};removePhotoFlag=false;m.textContent='';bgReset();updatePhotoUI()});
   }).catch(function(err){m.textContent=photoErr(err,file)});
 }
 function setItemPhotoFromFile(id,file){
@@ -117,14 +118,14 @@ function applyPhoto(it){
 function opt(list,sel){return list.map(function(x){return '<option'+(x===sel?' selected':'')+'>'+esc(x)+'</option>'}).join('')}
 function openItem(id){
   var it=id?findItem(id):null; editingId=id||null;
-  if(pendingPhoto){URL.revokeObjectURL(pendingPhoto.url);pendingPhoto=null} removePhotoFlag=false;
+  if(pendingPhoto){URL.revokeObjectURL(pendingPhoto.url);pendingPhoto=null} removePhotoFlag=false; bgReset();
   var d=$('#itemDlg');
   var links=PLATFORMS.map(function(pl){
     return '<div class="ff"><label for="link_'+pl.key+'">'+pl.name+' listing link</label><input type="text" id="link_'+pl.key+'" data-linkkey="'+pl.key+'" placeholder="https://'+pl.domain+'/…" value="'+esc(it&&it.links?(it.links[pl.key]||''):'')+'" autocomplete="off"><div class="msg" id="m_link_'+pl.key+'" aria-live="polite"></div></div>';
   }).join('');
   d.innerHTML='<form class="dlg" id="itemForm" novalidate><h2>'+(it?'Edit item':'New item')+'</h2>'+
     '<div class="form-grid">'+
-    '<div class="full photobox"><div class="frame big noph" id="photoPreview"></div><div class="pb-text"><b>Photo</b><p>Add a clear picture of the item. <b>Drag one in, paste it, or choose one from your Photos.</b> HEIC, JPG, PNG, WebP and GIF all work. Pictures are saved in this browser.</p><div class="pb-btns"><button type="button" class="btn small" id="photoBtn" data-action="pick-photo">Add photo</button><button type="button" class="btn small secondary" id="photoRm" data-action="remove-photo" hidden>Remove photo</button></div><div class="msg bad" id="m_photo" aria-live="polite"></div></div><input type="file" id="photoFile" accept="image/*,.heic,.heif" hidden></div>'+
+    '<div class="full photobox"><div class="frame big noph" id="photoPreview"></div><div class="pb-text"><b>Photo</b><p>Add a clear picture of the item. <b>Drag one in, paste it, or choose one from your Photos.</b> HEIC, JPG, PNG, WebP and GIF all work. Pictures are saved in this browser.</p><div class="pb-btns"><button type="button" class="btn small" id="photoBtn" data-action="pick-photo">Add photo</button><button type="button" class="btn small secondary" id="photoBg" data-action="bg-remove" hidden>Remove background</button><button type="button" class="btn small secondary" id="photoRm" data-action="remove-photo" hidden>Remove photo</button></div><div class="bgopts" id="bgOpts" hidden><span class="bglabel">Background:</span><button type="button" class="bgchip" data-action="bg-pick" data-bg="white" aria-pressed="true"><i style="background:#FFFFFF"></i>White</button><button type="button" class="bgchip" data-action="bg-pick" data-bg="bone" aria-pressed="false"><i style="background:#F8F4E7"></i>Bone</button><button type="button" class="bgchip" data-action="bg-pick" data-bg="clear" aria-pressed="false"><i class="clear"></i>Clear</button><button type="button" class="linkbtn" data-action="bg-undo">Undo</button></div><div class="msg" id="m_bg" aria-live="polite"></div><div class="msg bad" id="m_photo" aria-live="polite"></div></div><input type="file" id="photoFile" accept="image/*,.heic,.heif" hidden></div>'+
     '<div class="ff full"><label for="f_title">Name *</label><input type="text" id="f_title" maxlength="120" placeholder="e.g. Wool coat, camel" value="'+esc(it?it.title:'')+'"><div class="msg bad" id="m_title" aria-live="polite"></div></div>'+
     '<div class="ff"><label for="f_cat">Category</label><select id="f_cat">'+opt(CATEGORIES,it?it.category:'Tops')+'</select></div>'+
     '<div class="ff"><label for="f_size">Size</label><input type="text" id="f_size" maxlength="20" value="'+esc(it?it.size:'')+'"></div>'+

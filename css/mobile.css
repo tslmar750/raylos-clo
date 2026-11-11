@@ -214,3 +214,9 @@ html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
   .scanrow .btn{flex:1 1 auto}
   .msg button.chip{min-height:44px}
 }
+
+/* ================= Step 8: home screen ================= */
+.hs-card{display:none}
+.hs-steps{margin:0;padding-left:22px;font-size:16px}
+.hs-steps li{margin-bottom:4px}
+@media (max-width:900px){.hs-card{display:block}}

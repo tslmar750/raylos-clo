@@ -1,10 +1,17 @@
 /* Raylos'Clo: Settings tab */
 'use strict';
 /* ================= SETTINGS ================= */
+function isStandalone(){return (window.matchMedia&&matchMedia('(display-mode: standalone)').matches)||navigator.standalone===true}
+function homeScreenCard(){
+  if(isStandalone())return '';
+  return '<div class="card hs-card" style="--accent:var(--olive)"><h2>Put it on your home screen</h2><p style="margin:0 0 8px;font-size:16px">Open Raylos’Clo like an app, full screen, with the cat icon.</p>'+
+    '<ol class="hs-steps"><li>Open this page in <b>Safari</b>.</li><li>Tap the <b>Share</b> button (the square with an arrow pointing up).</li><li>Scroll down and tap <b>Add to Home Screen</b>, then <b>Add</b>.</li><li>Open it from your home screen and log in once.</li></ol>'+
+    '<p style="margin:6px 0 0;font-size:14px">On Android: Chrome menu (⋮), then <b>Add to Home screen</b>.</p></div>';
+}
 function renderSettings(){
   var p=$('[data-panel="settings"]');
   p.innerHTML='<div class="top"><h1>Settings</h1></div>'+(MOCK?'<div class="card" style="--accent:var(--plum)"><h2>Mock version</h2><p style="margin:0 0 6px">Everything here is made up so you can see what the site looks like in real use. You can click around and change things. It’s saved separately from your real site.</p><div class="btnrow2"><button class="btn" data-action="mock-reset">Reset to the original fake data</button></div></div>':'')+
-    '<div class="settings-grid"><div class="card" style="--accent:var(--sage)"><h2>About you</h2><div class="ff"><label for="set_name">Your name</label><input type="text" id="set_name" maxlength="40" data-change="name" value="'+esc(state.settings.name)+'"></div></div>'+
+    '<div class="settings-grid">'+homeScreenCard()+'<div class="card" style="--accent:var(--sage)"><h2>About you</h2><div class="ff"><label for="set_name">Your name</label><input type="text" id="set_name" maxlength="40" data-change="name" value="'+esc(state.settings.name)+'"></div></div>'+
     '<div class="card" style="--accent:var(--fawn)"><h2>Platform fees</h2><p style="margin:0 0 12px;font-size:16px">Enter each platform’s current fee as a percent of the sale price. Check each platform’s own fee page, since rates change. Leave at 0 if you don’t pay one.</p><div class="fees">'+
     PLATFORMS.map(function(pl){return '<div class="ff"><label for="fee_'+pl.key+'">'+pl.name+' (%)</label><input type="number" id="fee_'+pl.key+'" min="0" max="100" step="0.1" data-change="fee" data-key="'+pl.key+'" value="'+(state.settings.fees[pl.key]!=null?esc(state.settings.fees[pl.key]):'')+'"></div>'}).join('')+'</div></div></div>'+
     settingsExtraCards()+

@@ -115,13 +115,41 @@ function applyPhoto(it){
   removePhotoFlag=false;
 }
 function opt(list,sel){return list.map(function(x){return '<option'+(x===sel?' selected':'')+'>'+esc(x)+'</option>'}).join('')}
+function linkField(pl,it){
+    return '<div class="ff"><label for="link_'+pl.key+'">'+pl.name+' listing link</label><input type="text" id="link_'+pl.key+'" data-linkkey="'+pl.key+'" placeholder="'+(pl.domain?'https://'+pl.domain+'/…':'Paste the link')+'" value="'+esc(it&&it.links?(it.links[pl.key]||''):'')+'" autocomplete="off"><div class="msg" id="m_link_'+pl.key+'" aria-live="polite"></div></div>';
+}
+function sourceOptions(cur){
+  cur=String(cur||'');var list=sourceList();if(cur&&list.indexOf(cur)<0)list.push(cur);
+  return '<option value="">Not set</option>'+list.map(function(x){return '<option value="'+esc(x)+'"'+(x===cur?' selected':'')+'>'+esc(x)+'</option>'}).join('')+'<option value="__add">Add more…</option>';
+}
+function srcAdd(){
+  var inp=$('#f_src_new'),m=$('#m_source'),v=(inp.value||'').trim().replace(/\s+/g,' ');m.textContent='';
+  if(!v){m.textContent='Type where you got it first.';inp.focus();return ''}
+  var have=sourceList().filter(function(x){return x.toLowerCase()===v.toLowerCase()})[0];
+  if(!have){state.settings.sources=(state.settings.sources||[]).concat([v]);save();have=v}
+  $('#f_source').innerHTML=sourceOptions(have);$('#f_source').value=have;inp.value='';$('#srcAdd').hidden=true;
+  return have;
+}
+function pickedSource(){
+  var v=$('#f_source').value;
+  if(v==='__add')return ($('#f_src_new').value||'').trim()?srcAdd():'';
+  return v;
+}
+function appAdd(){
+  var inp=$('#f_newapp'),m=$('#m_newapp'),v=cleanAppName(inp.value);m.textContent='';
+  if(!v){m.textContent='Type the app’s name first.';inp.focus();return}
+  if(PLATFORMS.some(function(p){return p.name.toLowerCase()===v.toLowerCase()})){m.textContent=v+' is already on the list.';return}
+  var key=appKey(v);state.settings.apps=(state.settings.apps||[]).concat([{key:key,name:v}]);syncApps(state.settings);save();
+  $('#addAppRow').insertAdjacentHTML('beforebegin',linkField(PLAT[key],editingItem()));
+  inp.value='';$('#appForm').hidden=true;$('#appShow').hidden=false;
+  var f=$('#link_'+key);if(f)f.focus();
+  toast(v+' added. It now shows up for sales, fees and money too.');
+}
 function openItem(id){
   var it=id?findItem(id):null; editingId=id||null;
   if(pendingPhoto){URL.revokeObjectURL(pendingPhoto.url);pendingPhoto=null} removePhotoFlag=false;
   var d=$('#itemDlg');
-  var links=PLATFORMS.map(function(pl){
-    return '<div class="ff"><label for="link_'+pl.key+'">'+pl.name+' listing link</label><input type="text" id="link_'+pl.key+'" data-linkkey="'+pl.key+'" placeholder="https://'+pl.domain+'/…" value="'+esc(it&&it.links?(it.links[pl.key]||''):'')+'" autocomplete="off"><div class="msg" id="m_link_'+pl.key+'" aria-live="polite"></div></div>';
-  }).join('');
+  var links=PLATFORMS.map(function(pl){return linkField(pl,it)}).join('');
   d.innerHTML='<form class="dlg" id="itemForm" novalidate><h2>'+(it?'Edit item':'New item')+'</h2>'+
     '<div class="form-grid">'+
     '<div class="full photobox"><div class="frame big noph" id="photoPreview"></div><div class="pb-text"><b>Photo</b><p>Add a clear picture of the item. <b>Drag one in, paste it, or choose one from your Photos.</b> HEIC, JPG, PNG, WebP and GIF all work. Pictures are saved in this browser.</p><div class="pb-btns"><button type="button" class="btn small" id="photoBtn" data-action="pick-photo">Add photo</button><button type="button" class="btn small secondary" id="photoRm" data-action="remove-photo" hidden>Remove photo</button></div><div class="msg bad" id="m_photo" aria-live="polite"></div></div><input type="file" id="photoFile" accept="image/*,.heic,.heif" hidden></div>'+
@@ -130,6 +158,8 @@ function openItem(id){
     '<div class="ff"><label for="f_size">Size</label><input type="text" id="f_size" maxlength="20" value="'+esc(it?it.size:'')+'"></div>'+
     '<div class="ff"><label for="f_brand">Brand</label><input type="text" id="f_brand" maxlength="60" value="'+esc(it?it.brand:'')+'"></div>'+
     '<div class="ff"><label for="f_color">Color</label><input type="text" id="f_color" maxlength="40" placeholder="e.g. black" value="'+esc(it?it.color:'')+'"></div>'+
+    '<div class="ff"><label for="f_source">Where I got it</label><select id="f_source">'+sourceOptions(it?it.source:'')+'</select>'+
+      '<div class="addrow2" id="srcAdd" hidden><input type="text" id="f_src_new" maxlength="40" placeholder="Type where you got it" autocomplete="off" enterkeyhint="done"><button type="button" class="btn small" data-action="src-add">Add</button></div><div class="msg bad" id="m_source" aria-live="polite"></div></div>'+
     '<div class="ff"><label for="f_cond">Condition</label><select id="f_cond"><option value="">Not set</option>'+opt(['New with tags','Like new','Good','Fair'],it?it.condition:'')+'</select></div>'+
     '<div class="ff"><label for="f_cost">What I paid ($)</label><input type="number" id="f_cost" min="0" step="0.01" value="'+esc(it&&it.cost!==''&&it.cost!=null?it.cost:'')+'"><div class="msg bad" id="m_cost" aria-live="polite"></div></div>'+
     '<div class="ff"><label for="f_price">Asking price ($)</label><input type="number" id="f_price" min="0" step="0.01" value="'+esc(it&&it.price!==''&&it.price!=null?it.price:'')+'"><div class="msg bad" id="m_price" aria-live="polite"></div></div>'+
@@ -140,7 +170,9 @@ function openItem(id){
       '<div class="ff"><label for="f_pkg">Package size</label><select id="f_pkg"><option value="">Not set</option>'+opt(['Extra small','Small','Medium','Large','Extra large'],it?it.pkg:'')+'</select></div>'+
       '<div class="ff"><label for="f_dsource">Source (Depop)</label><input type="text" id="f_dsource" maxlength="40" placeholder="e.g. Vintage, Preloved" value="'+esc(it?it.dsource:'')+'"></div>'+
     '</div></details>'+
-    '<div class="full"><h3>Where it’s posted</h3><p style="margin:0 0 6px;font-size:15px">Paste the link from each platform. A platform only counts as posted once its link is here.</p></div>'+links+
+    '<div class="full"><h3>Where it’s posted</h3><p style="margin:0 0 6px;font-size:15px">Paste the link from each app. An app only counts as posted once its link is here.</p></div>'+links+
+    '<div class="full addapp" id="addAppRow"><button type="button" class="btn small secondary" data-action="app-show" id="appShow">+ Add another app</button>'+
+      '<div id="appForm" hidden><label for="f_newapp">App name</label><div class="addrow2"><input type="text" id="f_newapp" maxlength="30" placeholder="e.g. Mercari, Grailed, ThredUp" autocomplete="off" enterkeyhint="done"><button type="button" class="btn small" data-action="app-add">Add</button></div><div class="msg bad" id="m_newapp" aria-live="polite"></div></div></div>'+
     '</div>'+
     '<div class="dlg-actions">'+
       (it?'<button type="button" class="btn secondary" data-action="delete-item" data-id="'+esc(it.id)+'">Delete</button>':'')+
@@ -158,6 +190,7 @@ function checkLink(key,val){
   var u; try{u=new URL(val)}catch(e){return {ok:false,msg:'That doesn’t look like a web link. It should start with https://'}}
   if(u.protocol!=='http:'&&u.protocol!=='https:')return {ok:false,msg:'That doesn’t look like a web link. It should start with https://'};
   var host=u.hostname.toLowerCase(), dom=PLAT[key].domain;
+  if(!dom)return {ok:true,warn:''};
   if(!(host===dom||host.slice(-(dom.length+1))==='.'+dom))return {ok:true,warn:'Heads up: this link isn’t on '+dom+'. It will still be saved.'};
   return {ok:true,warn:''};
 }
@@ -175,7 +208,7 @@ function saveItem(){
   var links={};
   PLATFORMS.forEach(function(pl){var r=showLinkMsg(pl.key);if(!r.ok)ok=false;var v=$('#link_'+pl.key).value.trim();if(v)links[pl.key]=v});
   if(!ok){var bad=$('#itemDlg .msg.bad:not(:empty)');if(bad){var inp=bad.parentNode.querySelector('input');if(inp)inp.focus()}return}
-  var data={title:title,category:$('#f_cat').value,size:$('#f_size').value.trim(),brand:$('#f_brand').value.trim(),condition:$('#f_cond').value,color:$('#f_color').value.trim(),styleTags:$('#f_style').value.trim(),age:$('#f_age').value,pkg:$('#f_pkg').value,dsource:$('#f_dsource').value.trim(),cost:cost===''?'':num(cost),price:price===''?'':num(price),notes:$('#f_notes').value.trim(),links:links};
+  var data={title:title,category:$('#f_cat').value,size:$('#f_size').value.trim(),brand:$('#f_brand').value.trim(),condition:$('#f_cond').value,color:$('#f_color').value.trim(),styleTags:$('#f_style').value.trim(),age:$('#f_age').value,pkg:$('#f_pkg').value,dsource:$('#f_dsource').value.trim(),source:pickedSource(),cost:cost===''?'':num(cost),price:price===''?'':num(price),notes:$('#f_notes').value.trim(),links:links};
   var saved;
   if(editingId){var it=findItem(editingId);saved=it;Object.keys(data).forEach(function(k){it[k]=data[k]});
     // links removed after a sale no longer need delisting

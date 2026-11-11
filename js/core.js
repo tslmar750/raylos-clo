@@ -18,13 +18,42 @@ var PLATFORMS=[
   {key:'depop',name:'Depop',domain:'depop.com',color:'var(--plum)'},
   {key:'vinted',name:'Vinted',domain:'vinted.com',color:'var(--olive)'},
   {key:'poshmark',name:'Poshmark',domain:'poshmark.com',color:'var(--fawn)'},
-  {key:'ebay',name:'eBay',domain:'ebay.com',color:'var(--lilac)'},
-  {key:'instagram',name:'Instagram',domain:'instagram.com',color:'var(--sage)'}
+  {key:'ebay',name:'eBay',domain:'ebay.com',color:'var(--lilac)'}
 ];
+/* Built-in apps. Apps the user adds (Settings → state.settings.apps) are added after these by syncApps(). */
+var BASE_PLATFORMS=PLATFORMS.slice();
+var APP_COLORS=['var(--sage)','var(--fawn)','var(--plum)','var(--olive)','var(--lilac)'];
+/* Older items may still mention Instagram; keep its name for those, but it's no longer offered. */
+var OLD_PLAT={instagram:{key:'instagram',name:'Instagram',domain:'instagram.com',color:'var(--sage)',old:true}};
 var PLAT={}; PLATFORMS.forEach(function(p){PLAT[p.key]=p});
 var WALLET_KEYS=['depop','vinted','poshmark','ebay'];
+/* Rebuild the app lists in place, so every tab sees the user's own apps too. */
+function syncApps(settings){
+  var apps=(settings&&Array.isArray(settings.apps))?settings.apps:[];
+  PLATFORMS.length=0; BASE_PLATFORMS.forEach(function(p){PLATFORMS.push(p)});
+  apps.forEach(function(a,i){if(a&&a.key&&a.name)PLATFORMS.push({key:String(a.key),name:cleanAppName(a.name),domain:'',color:APP_COLORS[i%APP_COLORS.length],custom:true})});
+  Object.keys(PLAT).forEach(function(k){delete PLAT[k]});
+  Object.keys(OLD_PLAT).forEach(function(k){PLAT[k]=OLD_PLAT[k]});
+  PLATFORMS.forEach(function(p){PLAT[p.key]=p});
+  WALLET_KEYS.length=0; PLATFORMS.forEach(function(p){WALLET_KEYS.push(p.key)});
+}
+/* App names show up all over the page, so keep them to plain text */
+function cleanAppName(s){return String(s||'').replace(/[<>"&`]/g,'').replace(/\s+/g,' ').trim().slice(0,30)}
+function appKey(name){
+  var base='app_'+(String(name).toLowerCase().replace(/[^a-z0-9]+/g,'').slice(0,24)||'x'), k=base, n=2;
+  while(PLAT[k]&&!PLAT[k].old)k=base+(n++);
+  return k;
+}
+/* "Where I got it": the user's own list, plus any place already saved on an item. */
+function sourceList(){
+  var seen={},out=[];
+  function add(s){s=String(s||'').trim();var k=s.toLowerCase();if(s&&!seen[k]){seen[k]=1;out.push(s)}}
+  (state.settings.sources||[]).forEach(add);
+  state.items.forEach(function(i){add(i.source)});
+  return out;
+}
 var CATEGORIES=['Tops','Bottoms','Dresses','Outerwear','Shoes','Bags','Hats','Jewelry','Accessories','Other'];
-var SOURCES=['My closet','3Fifteen','Wescott Thrift','Goodwill Outlet','Facebook Marketplace','Other'];
+var SOURCES=['My closet','3Fifteen','Wescott Thrift','Goodwill Outlet','Facebook Marketplace','Other']; /* only used by the mock/sample data now */
 var VIEWS=['dashboard','items','sold-shipping','money','notifications','settings'];
 var TITLES={'dashboard':'Dashboard','items':'Items','sold-shipping':'Sold & Shipping','money':'Money','notifications':'Notifications','settings':'Settings'};
 
@@ -46,14 +75,15 @@ function platName(k){return k==='direct'?'Direct':(PLAT[k]?PLAT[k].name:esc(k))}
 function plural(n,w){return n+' '+w+(n===1?'':'s')}
 
 /* ---------- state ---------- */
-function blank(){return {items:[],notes:[],tasks:[],templates:[],gmail:{clientId:'',query:'',done:[],auto:false},money:{wallet:{},pending:{},direct:0,adjust:{}},settings:{name:'',fees:{},hold:{}}}}
+function blank(){var b={items:[],notes:[],tasks:[],templates:[],gmail:{clientId:'',query:'',done:[],auto:false},money:{wallet:{},pending:{},direct:0,adjust:{}},settings:{name:'',fees:{},hold:{},sources:[],apps:[]}};syncApps(b.settings);return b}
 function normalize(d){
   var b=blank(); d=d||{};
   b.items=Array.isArray(d.items)?d.items:[]; b.notes=Array.isArray(d.notes)?d.notes:[]; b.tasks=Array.isArray(d.tasks)?d.tasks:[];
   if(d.money){b.money.wallet=d.money.wallet||{};b.money.pending=d.money.pending||{};b.money.direct=num(d.money.direct);b.money.adjust=d.money.adjust||{}}
-  if(d.settings){b.settings.name=d.settings.name||'';b.settings.fees=d.settings.fees||{};b.settings.hold=d.settings.hold||{}}
+  if(d.settings){b.settings.name=d.settings.name||'';b.settings.fees=d.settings.fees||{};b.settings.hold=d.settings.hold||{};b.settings.sources=Array.isArray(d.settings.sources)?d.settings.sources:[];b.settings.apps=Array.isArray(d.settings.apps)?d.settings.apps:[]}
   if(d.gmail){b.gmail.clientId=d.gmail.clientId||'';b.gmail.query=d.gmail.query||'';b.gmail.done=Array.isArray(d.gmail.done)?d.gmail.done:[];b.gmail.auto=!!d.gmail.auto}
   b.templates=(Array.isArray(d.templates)&&d.templates.length)?d.templates:defaultTemplates();
+  syncApps(b.settings);
   return b;
 }
 function defaultTemplates(){return [

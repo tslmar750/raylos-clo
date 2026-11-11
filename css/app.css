@@ -419,3 +419,9 @@ body.filedrag [data-panel="items"]{outline:3px dashed var(--plum);outline-offset
   h1{font-size:46px}
   .hello-text{font-size:64px}
 }
+
+/* ---- item form: add a place / add an app ---- */
+.addrow2{display:flex;gap:8px;margin-top:8px;align-items:center}
+.addrow2 input{flex:1;min-width:0}
+.addapp #appForm{margin-top:4px}
+#m_source:empty,#m_newapp:empty{display:none}

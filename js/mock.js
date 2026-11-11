@@ -64,6 +64,6 @@ function mockData(){
   note('poshmark','closet_by_jo','Offered $20 for the leather bag.',9,false,true);
   st.tasks=[{id:'t'+uid(),text:'Buy 50 poly mailers',done:false},{id:'t'+uid()+'b',text:'Photograph the new thrift haul',done:false},{id:'t'+uid()+'c',text:'Wash and fold the cardigans',done:true}];
   st.money={wallet:{},pending:{},direct:0,adjust:{}};
-  st.settings={name:'Ray',fees:{depop:10,vinted:0,poshmark:20,ebay:13,instagram:0}};
+  st.settings={name:'Ray',fees:{depop:10,vinted:0,poshmark:20,ebay:13}};
   return normalize(st);
 }

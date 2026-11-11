@@ -2,7 +2,7 @@
 'use strict';
 /* ================= LISTING KIT ================= */
 var kitId=null, kitPlat='depop', kitStep=0;
-var KIT_PLATS=['depop','vinted','poshmark','ebay'];
+var KIT_PLATS=WALLET_KEYS; /* same list as everywhere else, including apps the user adds */
 var PLAT_URL={depop:'https://www.depop.com',vinted:'https://www.vinted.com',poshmark:'https://poshmark.com',ebay:'https://www.ebay.com'};
 var SELL_HINT={depop:'In the Depop app or site, tap the Sell button.',vinted:'In Vinted, tap Sell an item.',poshmark:'In Poshmark, tap the Sell button.',ebay:'In eBay, tap Sell.'};
 function tagList(it){
@@ -60,7 +60,7 @@ function openKit(id,plat,keep){
     '<div class="kprice"><div><b>Price</b><span>'+(fs.price?money(fs.price):'Not set yet')+'</span></div><small>'+(fs.price?'You type this in on the platform, so there is nothing to copy.':'Add a price to the item first. <button type="button" class="linkbtn" data-action="edit-item" data-id="'+esc(it.id)+'">Fill it in</button>')+'</small></div>'+
     '<p class="kempty">Category, condition, color and the other dropdowns: pick those on the platform.</p>'+
     '<div class="kfield kphoto"><span>'+(src?'Photo ready':'No photo yet. Add one with Edit.')+'</span>'+(src?'<button type="button" class="btn small secondary" data-action="kit-photo">Save or share photo</button>':'')+'</div>'+
-    '<div class="kopen"><a class="btn" href="'+PLAT_URL[kitPlat]+'" target="_blank" rel="noopener noreferrer">Open '+PLAT[kitPlat].name+' ↗</a><p>'+SELL_HINT[kitPlat]+'</p></div>'+
+    '<div class="kopen">'+(PLAT_URL[kitPlat]?'<a class="btn" href="'+PLAT_URL[kitPlat]+'" target="_blank" rel="noopener noreferrer">Open '+PLAT[kitPlat].name+' ↗</a>':'')+'<p>'+(SELL_HINT[kitPlat]||'Open '+esc(PLAT[kitPlat].name)+' and start a new listing.')+'</p></div>'+
     '<div class="kopen" style="margin:6px 0"><button type="button" class="btn" data-action="kit-posted">I posted it on '+PLAT[kitPlat].name+' ✓</button><p>Tap this after you post, with or without a link. It remembers where the item is listed, so you get a delist reminder later.</p></div>'+
     '<div class="klink"><label for="kit_link"><b style="font-size:14px">After you post: paste the listing link</b></label><div class="row"><input type="text" id="kit_link" placeholder="https://'+PLAT[kitPlat].domain+'/…" value="'+esc(link)+'" autocomplete="off"><button type="button" class="btn small" data-action="kit-save-link">Save link</button></div><div class="msg" id="kit_msg" aria-live="polite"></div></div>'+
     '<div class="kstep"><button type="button" class="btn" id="kit_next" data-action="kit-next"></button><p id="kit_stepmsg"></p></div>'+

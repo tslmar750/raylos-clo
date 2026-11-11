@@ -45,6 +45,9 @@ document.addEventListener('click',function(e){
     case 'kit-save-link':kitSaveLink();break;
     case 'close-kit':$('#kitDlg').close();break;
     case 'pick-photo':$('#photoFile').click();break;
+    case 'src-add':srcAdd();break;
+    case 'app-show':$('#appForm').hidden=false;b.hidden=true;$('#f_newapp').focus();break;
+    case 'app-add':appAdd();break;
     case 'remove-photo':if(pendingPhoto){URL.revokeObjectURL(pendingPhoto.url);pendingPhoto=null}removePhotoFlag=true;updatePhotoUI();break;
     case 'delete-item':if(window.confirm('Delete this item for good?')){state.items=state.items.filter(function(i){return i.id!==id});clearPhoto(id);photoDel(id).catch(function(){});save();$('#itemDlg').close();render()}break;
     case 'undo-sale':if(window.confirm('Undo this sale? The item goes back to unsold.')){var it=findItem(id);if(it){delete it.sale;save();$('#itemDlg').close();render()}}break;
@@ -76,6 +79,7 @@ document.addEventListener('change',function(e){
   if(e.target.id==='r_tpl'||e.target.id==='r_item'||e.target.id==='r_buyer'){replyText();return}
   if(e.target.id==='photoFile'){handlePhotoFile(e.target.files&&e.target.files[0]);e.target.value='';return}
   if(e.target.id==='f_cat'&&$('#photoPreview')){updatePhotoUI();return}
+  if(e.target.id==='f_source'){var add=e.target.value==='__add';$('#srcAdd').hidden=!add;$('#m_source').textContent='';if(add)$('#f_src_new').focus();return}
   var t=e.target.closest('[data-change]'); if(!t)return;
   var a=t.getAttribute('data-change'), id=t.getAttribute('data-id'), key=t.getAttribute('data-key');
   switch(a){
@@ -120,3 +124,9 @@ document.addEventListener('submit',function(e){
   }
 });
 $('#importFile').addEventListener('change',function(e){var f=e.target.files&&e.target.files[0];if(f)importData(f);e.target.value=''});
+/* Enter in the little "add" boxes adds the entry instead of saving the whole item */
+document.addEventListener('keydown',function(e){
+  if(e.key!=='Enter'||!e.target)return;
+  if(e.target.id==='f_src_new'){e.preventDefault();srcAdd()}
+  else if(e.target.id==='f_newapp'){e.preventDefault();appAdd()}
+});

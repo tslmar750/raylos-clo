@@ -120,12 +120,14 @@ function groupProfit(sold,keyFn,nameFn){
 }
 function chartCards(sold,per,anim){
   var label=per==='all'?'All time':'This month';
+  var bySource=groupProfit(sold,function(i){return i.source||'Not set'},function(k){return k});
   var byPlat=groupProfit(sold,function(i){return i.sale.platform},function(k){return platName(k)});
   var platColor=function(r){return r.key==='direct'?'var(--bone)':(PLAT[r.key]?PLAT[r.key].color:'var(--sage)')};
   return '<div class="card" style="--accent:var(--sage)"><h2>Monthly sales and profit</h2><p class="chart-sub">Last 6 months, based on the date each item sold.</p>'+chartMonthly(anim)+'</div>'+
     '<div class="card" style="--accent:var(--fawn)"><h2>Where each dollar goes</h2><p class="chart-sub">'+label+'. Every dollar you sold, split into costs and profit.</p>'+chartDollar(sold,anim)+'</div>'+
     '<div class="card" style="--accent:var(--lilac)"><h2>What earns the most</h2><p class="chart-sub">'+label+'. Total profit, with the average per item underneath.</p>'+
-    '<div class="hgroup"><h3>Where I sold it</h3>'+(sold.length?hbars(byPlat,anim,platColor):chartEmpty('No sales in this period yet.'))+'</div></div>';
+    '<div class="grid2" style="margin-bottom:0"><div class="hgroup"><h3>Where I got it</h3>'+(sold.length?hbars(bySource,anim,function(){return 'var(--lilac)'}):chartEmpty('No sales in this period yet.'))+'</div>'+
+    '<div class="hgroup"><h3>Where I sold it</h3>'+(sold.length?hbars(byPlat,anim,platColor):chartEmpty('No sales in this period yet.'))+'</div></div></div>';
 }
 function animateCounts(root,anim){
   var reduce=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;

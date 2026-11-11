@@ -131,7 +131,7 @@ function cloudPhotoPath(id){return '/storage/v1/object/photos/'+CLOUD.uid+'/'+id
 function cloudPhotoUp(id,blob){
   if(!CLOUD.on||!CLOUD.uid)return Promise.resolve();
   CLOUD.upping[id]=1;
-  return sbAuthed('POST',cloudPhotoPath(id),{body:blob,headers:{'Content-Type':(blob&&blob.type)||'image/jpeg','x-upsert':'true'}}).then(function(r){
+  return sbAuthed('POST',cloudPhotoPath(id),{body:blob,headers:{'Content-Type':'image/jpeg','x-upsert':'true'}}).then(function(r){
     if(!r.ok)throw new Error('photo '+r.status);
     var it=findItem(id); if(it&&it.photoCloud!==true){it.photoCloud=true;save()}
   }).catch(function(e){cloudFail(e)}).then(function(){delete CLOUD.upping[id]});

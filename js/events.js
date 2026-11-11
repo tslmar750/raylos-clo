@@ -45,10 +45,7 @@ document.addEventListener('click',function(e){
     case 'kit-save-link':kitSaveLink();break;
     case 'close-kit':$('#kitDlg').close();break;
     case 'pick-photo':$('#photoFile').click();break;
-    case 'remove-photo':if(pendingPhoto){URL.revokeObjectURL(pendingPhoto.url);pendingPhoto=null}removePhotoFlag=true;bgReset();updatePhotoUI();break;
-    case 'bg-remove':bgRemove();break;
-    case 'bg-pick':bgPick(b.getAttribute('data-bg'));break;
-    case 'bg-undo':bgUndo();break;
+    case 'remove-photo':if(pendingPhoto){URL.revokeObjectURL(pendingPhoto.url);pendingPhoto=null}removePhotoFlag=true;updatePhotoUI();break;
     case 'delete-item':if(window.confirm('Delete this item for good?')){state.items=state.items.filter(function(i){return i.id!==id});clearPhoto(id);photoDel(id).catch(function(){});save();$('#itemDlg').close();render()}break;
     case 'undo-sale':if(window.confirm('Undo this sale? The item goes back to unsold.')){var it=findItem(id);if(it){delete it.sale;save();$('#itemDlg').close();render()}}break;
     case 'item-filter':ui.itemFilter=b.getAttribute('data-f');refreshItems();break;

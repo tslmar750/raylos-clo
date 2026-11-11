@@ -419,14 +419,3 @@ body.filedrag [data-panel="items"]{outline:3px dashed var(--plum);outline-offset
   h1{font-size:46px}
   .hello-text{font-size:64px}
 }
-
-/* ---- background remover (item photo) ---- */
-.bgopts{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin-top:10px}
-.bglabel{font-size:14px;font-weight:700;margin-right:2px}
-.bgchip{display:inline-flex;align-items:center;gap:6px;border:1.5px solid var(--brindle);border-radius:999px;padding:4px 12px 4px 6px;font-size:14px;background:var(--white)}
-.bgchip i{width:18px;height:18px;border-radius:50%;border:1.5px solid var(--brindle);display:inline-block}
-.bgchip i.clear,.frame.see-through img{background:repeating-conic-gradient(#E3DCCB 0 25%,#FFFFFF 0 50%) 0 0/12px 12px}
-.bgchip[aria-pressed="true"]{background:var(--lilac);font-weight:700}
-.bgopts .linkbtn{margin-left:4px}
-#m_bg:empty,#m_photo:empty{display:none}
-#m_bg{font-size:14px;margin-top:6px}

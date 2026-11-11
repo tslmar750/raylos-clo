@@ -76,6 +76,8 @@
 <dialog id="replyDlg" class="kit" aria-label="Reply to a buyer"></dialog>
 <dialog id="gmailDlg" class="kit" aria-label="Check Gmail"></dialog>
 <dialog id="delistDlg" class="kit" aria-label="Take these down now"></dialog>
+<input type="file" id="receiptCam" accept="image/*" capture="environment" hidden>
+<input type="file" id="receiptPick" accept="image/*,.heic,.heif" hidden>
 <input type="file" id="importFile" accept=".json,application/json" hidden>
 <div id="dropHint">Drop a photo on an item to add it, or anywhere here to start a new item</div>
 <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
@@ -89,6 +91,7 @@
 <script src="js/gmail.js"></script>
 <script src="js/attention.js"></script>
 <script src="js/dialogs.js"></script>
+<script src="js/receipt.js"></script>
 <script src="js/fields.js"></script>
 <script src="js/sold.js"></script>
 <script src="js/money.js"></script>

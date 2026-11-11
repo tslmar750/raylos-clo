@@ -203,3 +203,14 @@ html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
   dialog.kit[open],dialog.kit[open]::backdrop{animation:none}
   dialog.kit.closing{transition:none}
 }
+
+/* ================= Step 5: camera buttons ================= */
+.only-phone{display:none}
+@media (max-width:900px){
+  .only-phone{display:inline-flex}
+  .pb-btns .btn{flex:1 1 auto;justify-content:center}
+}
+@media (max-width:900px){
+  .scanrow .btn{flex:1 1 auto}
+  .msg button.chip{min-height:44px}
+}

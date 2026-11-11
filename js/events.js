@@ -45,6 +45,7 @@ document.addEventListener('click',function(e){
     case 'kit-save-link':kitSaveLink();break;
     case 'close-kit':$('#kitDlg').close();break;
     case 'pick-photo':$('#photoFile').click();break;
+    case 'take-photo':$('#photoCam').click();break;
     case 'src-add':srcAdd();break;
     case 'app-show':$('#appForm').hidden=false;b.hidden=true;$('#f_newapp').focus();break;
     case 'app-add':appAdd();break;
@@ -77,7 +78,7 @@ document.addEventListener('click',function(e){
 document.addEventListener('change',function(e){
   if(e.target.id==='p_item'){toggleNewItem();return}
   if(e.target.id==='r_tpl'||e.target.id==='r_item'||e.target.id==='r_buyer'){replyText();return}
-  if(e.target.id==='photoFile'){handlePhotoFile(e.target.files&&e.target.files[0]);e.target.value='';return}
+  if(e.target.id==='photoFile'||e.target.id==='photoCam'){handlePhotoFile(e.target.files&&e.target.files[0]);e.target.value='';return}
   if(e.target.id==='f_cat'&&$('#photoPreview')){updatePhotoUI();return}
   if(e.target.id==='f_source'){var add=e.target.value==='__add';$('#srcAdd').hidden=!add;$('#m_source').textContent='';if(add)$('#f_src_new').focus();return}
   var t=e.target.closest('[data-change]'); if(!t)return;

@@ -427,3 +427,7 @@ body.filedrag [data-panel="items"]{outline:3px dashed var(--plum);outline-offset
 .aclist li{padding:10px 12px;border-radius:10px;cursor:pointer;font-size:16px;min-height:44px;display:flex;align-items:center}
 .aclist li:hover,.aclist li[aria-selected="true"]{background:var(--lilac)}
 #sizeAdd{margin-top:8px}
+/* scan a receipt for the tracking number */
+.scanrow{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:6px}
+.msg.ok{color:var(--brindle)}
+.msg button.chip{cursor:pointer;font:inherit;font-size:14px;color:inherit;min-height:32px;margin-top:4px}

@@ -5,8 +5,8 @@ var shipId=null;
 function openShip(id){
   var it=findItem(id); if(!it||!it.sale)return; shipId=id;
   var d=$('#shipDlg');
-  d.innerHTML='<form class="dlg" id="shipForm" novalidate><h2>Mark as shipped</h2><p style="margin:0 0 14px"><b>'+esc(it.title)+'</b> · sold on '+platName(it.sale.platform)+'</p><div class="ff"><label for="sh_track">Tracking number *</label><input type="text" id="sh_track" maxlength="60" value="'+esc(it.sale.tracking||'')+'"><div class="msg bad" id="m_track" aria-live="polite"></div></div><div class="dlg-actions"><button type="button" class="btn secondary" data-action="close-ship">Cancel</button><button type="submit" class="btn">Mark shipped</button></div></form>';
-  d.showModal(); $('#sh_track').focus();
+  d.innerHTML='<form class="dlg" id="shipForm" novalidate><h2>Mark as shipped</h2><p style="margin:0 0 14px"><b>'+esc(it.title)+'</b> · sold on '+platName(it.sale.platform)+'</p><div class="ff"><label for="sh_track">Tracking number *</label><input type="text" id="sh_track" maxlength="60" autocomplete="off" autocorrect="off" autocapitalize="characters" spellcheck="false" value="'+esc(it.sale.tracking||'')+'"><div class="msg bad" id="m_track" aria-live="polite"></div>'+scanButtons('sh_track','m_scan')+'<div class="msg" id="m_scan" aria-live="polite"></div></div><div class="dlg-actions"><button type="button" class="btn secondary" data-action="close-ship">Cancel</button><button type="submit" class="btn">Mark shipped</button></div></form>';
+  d.showModal(); if(!window.matchMedia('(max-width:900px)').matches)$('#sh_track').focus();
 }
 function saveShip(){
   var it=findItem(shipId); if(!it)return; var v=$('#sh_track').value.trim();
@@ -87,7 +87,7 @@ function updatePhotoUI(){
   var pv=$('#photoPreview'); if(!pv)return; var src=currentPhotoSrc(), cat=$('#f_cat')?$('#f_cat').value:'Tops';
   pv.className='frame big'+(src?'':' noph');
   pv.innerHTML=src?'<img src="'+src+'" alt="Photo preview">':'<img src="'+IMG[iconFor(cat)]+'" alt=""><span>No photo yet</span>';
-  $('#photoBtn').textContent=src?'Change photo':'Add photo'; $('#photoRm').hidden=!src;
+  $('#photoBtn').innerHTML=src?'<span class="hint-desk">Change photo</span><span class="hint-phone">Choose another</span>':'<span class="hint-desk">Add photo</span><span class="hint-phone">Choose photo</span>'; if($('#camBtn'))$('#camBtn').textContent=src?'Retake photo':'Take photo'; $('#photoRm').hidden=!src;
 }
 function handlePhotoFile(file){
   var m=$('#m_photo'); if(!m)return; m.textContent=''; if(!file)return;
@@ -152,7 +152,7 @@ function openItem(id){
   var links=PLATFORMS.map(function(pl){return linkField(pl,it)}).join('');
   d.innerHTML='<form class="dlg" id="itemForm" novalidate><h2>'+(it?'Edit item':'New item')+'</h2>'+
     '<div class="form-grid">'+
-    '<div class="full photobox"><div class="frame big noph" id="photoPreview"></div><div class="pb-text"><b>Photo</b><p>Add a clear picture of the item. <b>Drag one in, paste it, or choose one from your Photos.</b> HEIC, JPG, PNG, WebP and GIF all work. Pictures are saved in this browser.</p><div class="pb-btns"><button type="button" class="btn small" id="photoBtn" data-action="pick-photo">Add photo</button><button type="button" class="btn small secondary" id="photoRm" data-action="remove-photo" hidden>Remove photo</button></div><div class="msg bad" id="m_photo" aria-live="polite"></div></div><input type="file" id="photoFile" accept="image/*,.heic,.heif" hidden></div>'+
+    '<div class="full photobox"><div class="frame big noph" id="photoPreview"></div><div class="pb-text"><b>Photo</b><p>Add a clear picture of the item. <b class="hint-desk">Drag one in, paste it, or choose one from your Photos.</b><b class="hint-phone">Take one now or choose one from your Photos.</b> HEIC, JPG, PNG, WebP and GIF all work.</p><div class="pb-btns"><button type="button" class="btn small only-phone" id="camBtn" data-action="take-photo">Take photo</button><button type="button" class="btn small" id="photoBtn" data-action="pick-photo"><span class="hint-desk">Add photo</span><span class="hint-phone">Choose photo</span></button><button type="button" class="btn small secondary" id="photoRm" data-action="remove-photo" hidden>Remove photo</button></div><div class="msg bad" id="m_photo" aria-live="polite"></div></div><input type="file" id="photoFile" accept="image/*,.heic,.heif" hidden><input type="file" id="photoCam" accept="image/*" capture="environment" hidden></div>'+
     '<div class="ff full"><label for="f_title">Name *</label><input type="text" id="f_title" maxlength="120" spellcheck="true" autocorrect="on" autocapitalize="sentences" placeholder="e.g. Wool coat, camel" value="'+esc(it?it.title:'')+'"><div class="msg bad" id="m_title" aria-live="polite"></div></div>'+
     '<div class="ff"><label for="f_cat">Category</label><select id="f_cat">'+opt(CATEGORIES,it?it.category:'Tops')+'</select></div>'+
     '<div class="ff"><label for="f_size">Size</label><select id="f_size">'+sizeOptions(it?it.category:'Tops',it?it.size:'')+'</select>'+

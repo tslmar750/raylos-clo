@@ -421,3 +421,9 @@ body.filedrag [data-panel="items"]{outline:3px dashed var(--plum);outline-offset
 .addrow2 input{flex:1;min-width:0}
 .addapp #appForm{margin-top:4px}
 #m_source:empty,#m_newapp:empty{display:none}
+/* brand suggestions under the Brand box */
+.ac{position:relative}
+.aclist{position:absolute;left:0;right:0;top:calc(100% + 4px);z-index:20;list-style:none;margin:0;padding:4px;background:var(--white);border:1.5px solid var(--brindle);border-radius:14px;box-shadow:0 10px 24px rgba(60,50,40,.18);max-height:264px;overflow-y:auto}
+.aclist li{padding:10px 12px;border-radius:10px;cursor:pointer;font-size:16px;min-height:44px;display:flex;align-items:center}
+.aclist li:hover,.aclist li[aria-selected="true"]{background:var(--lilac)}
+#sizeAdd{margin-top:8px}

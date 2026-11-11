@@ -153,19 +153,20 @@ function openItem(id){
   d.innerHTML='<form class="dlg" id="itemForm" novalidate><h2>'+(it?'Edit item':'New item')+'</h2>'+
     '<div class="form-grid">'+
     '<div class="full photobox"><div class="frame big noph" id="photoPreview"></div><div class="pb-text"><b>Photo</b><p>Add a clear picture of the item. <b>Drag one in, paste it, or choose one from your Photos.</b> HEIC, JPG, PNG, WebP and GIF all work. Pictures are saved in this browser.</p><div class="pb-btns"><button type="button" class="btn small" id="photoBtn" data-action="pick-photo">Add photo</button><button type="button" class="btn small secondary" id="photoRm" data-action="remove-photo" hidden>Remove photo</button></div><div class="msg bad" id="m_photo" aria-live="polite"></div></div><input type="file" id="photoFile" accept="image/*,.heic,.heif" hidden></div>'+
-    '<div class="ff full"><label for="f_title">Name *</label><input type="text" id="f_title" maxlength="120" placeholder="e.g. Wool coat, camel" value="'+esc(it?it.title:'')+'"><div class="msg bad" id="m_title" aria-live="polite"></div></div>'+
+    '<div class="ff full"><label for="f_title">Name *</label><input type="text" id="f_title" maxlength="120" spellcheck="true" autocorrect="on" autocapitalize="sentences" placeholder="e.g. Wool coat, camel" value="'+esc(it?it.title:'')+'"><div class="msg bad" id="m_title" aria-live="polite"></div></div>'+
     '<div class="ff"><label for="f_cat">Category</label><select id="f_cat">'+opt(CATEGORIES,it?it.category:'Tops')+'</select></div>'+
-    '<div class="ff"><label for="f_size">Size</label><input type="text" id="f_size" maxlength="20" value="'+esc(it?it.size:'')+'"></div>'+
-    '<div class="ff"><label for="f_brand">Brand</label><input type="text" id="f_brand" maxlength="60" value="'+esc(it?it.brand:'')+'"></div>'+
-    '<div class="ff"><label for="f_color">Color</label><input type="text" id="f_color" maxlength="40" placeholder="e.g. black" value="'+esc(it?it.color:'')+'"></div>'+
+    '<div class="ff"><label for="f_size">Size</label><select id="f_size">'+sizeOptions(it?it.category:'Tops',it?it.size:'')+'</select>'+
+      '<div class="addrow2" id="sizeAdd" hidden><input type="text" id="f_size_new" maxlength="20" placeholder="Type the size, e.g. EU 38" aria-label="Type the size" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" enterkeyhint="done"></div></div>'+
+    '<div class="ff"><label for="f_brand">Brand</label><div class="ac"><input type="text" id="f_brand" maxlength="60" value="'+esc(it?it.brand:'')+'" placeholder="Start typing, e.g. Lev" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="brandList" autocomplete="off" autocorrect="off" autocapitalize="words" spellcheck="false"><ul class="aclist" id="brandList" role="listbox" aria-label="Brand suggestions" hidden></ul></div></div>'+
+    '<div class="ff"><label for="f_color">Color</label><input type="text" id="f_color" maxlength="40" spellcheck="true" autocorrect="on" autocapitalize="none" placeholder="e.g. black" value="'+esc(it?it.color:'')+'"></div>'+
     '<div class="ff"><label for="f_source">Where I got it</label><select id="f_source">'+sourceOptions(it?it.source:'')+'</select>'+
-      '<div class="addrow2" id="srcAdd" hidden><input type="text" id="f_src_new" maxlength="40" placeholder="Type where you got it" autocomplete="off" enterkeyhint="done"><button type="button" class="btn small" data-action="src-add">Add</button></div><div class="msg bad" id="m_source" aria-live="polite"></div></div>'+
+      '<div class="addrow2" id="srcAdd" hidden><input type="text" id="f_src_new" maxlength="40" spellcheck="true" autocapitalize="words" placeholder="Type where you got it" autocomplete="off" enterkeyhint="done"><button type="button" class="btn small" data-action="src-add">Add</button></div><div class="msg bad" id="m_source" aria-live="polite"></div></div>'+
     '<div class="ff"><label for="f_cond">Condition</label><select id="f_cond"><option value="">Not set</option>'+opt(['New with tags','Like new','Good','Fair'],it?it.condition:'')+'</select></div>'+
     '<div class="ff"><label for="f_cost">What I paid ($)</label><input type="number" id="f_cost" min="0" step="0.01" value="'+esc(it&&it.cost!==''&&it.cost!=null?it.cost:'')+'"><div class="msg bad" id="m_cost" aria-live="polite"></div></div>'+
     '<div class="ff"><label for="f_price">Asking price ($)</label><input type="number" id="f_price" min="0" step="0.01" value="'+esc(it&&it.price!==''&&it.price!=null?it.price:'')+'"><div class="msg bad" id="m_price" aria-live="polite"></div></div>'+
-    '<div class="ff full"><label for="f_notes">Notes, flaws, measurements</label><textarea id="f_notes" maxlength="800">'+esc(it?it.notes:'')+'</textarea></div>'+
+    '<div class="ff full"><label for="f_notes">Notes, flaws, measurements</label><textarea id="f_notes" maxlength="800" spellcheck="true" autocorrect="on" autocapitalize="sentences">'+esc(it?it.notes:'')+'</textarea></div>'+
     '<details class="full more"'+((it&&(it.styleTags||it.age||it.pkg||it.dsource))?' open':'')+'><summary>More details (optional)</summary><div class="form-grid" style="margin-top:10px">'+
-      '<div class="ff"><label for="f_style">Style tags</label><input type="text" id="f_style" maxlength="80" placeholder="e.g. y2k, vintage" value="'+esc(it?it.styleTags:'')+'"></div>'+
+      '<div class="ff"><label for="f_style">Style tags</label><input type="text" id="f_style" maxlength="80" autocorrect="off" autocapitalize="none" spellcheck="false" placeholder="e.g. y2k, vintage" value="'+esc(it?it.styleTags:'')+'"></div>'+
       '<div class="ff"><label for="f_age">Age</label><select id="f_age"><option value="">Not set</option>'+opt(['2020s','2010s','2000s','1990s','1980s','1970s','Before 1970'],it?it.age:'')+'</select></div>'+
       '<div class="ff"><label for="f_pkg">Package size</label><select id="f_pkg"><option value="">Not set</option>'+opt(['Extra small','Small','Medium','Large','Extra large'],it?it.pkg:'')+'</select></div>'+
       '<div class="ff"><label for="f_dsource">Source (Depop)</label><input type="text" id="f_dsource" maxlength="40" placeholder="e.g. Vintage, Preloved" value="'+esc(it?it.dsource:'')+'"></div>'+
@@ -208,7 +209,7 @@ function saveItem(){
   var links={};
   PLATFORMS.forEach(function(pl){var r=showLinkMsg(pl.key);if(!r.ok)ok=false;var v=$('#link_'+pl.key).value.trim();if(v)links[pl.key]=v});
   if(!ok){var bad=$('#itemDlg .msg.bad:not(:empty)');if(bad){var inp=bad.parentNode.querySelector('input');if(inp)inp.focus()}return}
-  var data={title:title,category:$('#f_cat').value,size:$('#f_size').value.trim(),brand:$('#f_brand').value.trim(),condition:$('#f_cond').value,color:$('#f_color').value.trim(),styleTags:$('#f_style').value.trim(),age:$('#f_age').value,pkg:$('#f_pkg').value,dsource:$('#f_dsource').value.trim(),source:pickedSource(),cost:cost===''?'':num(cost),price:price===''?'':num(price),notes:$('#f_notes').value.trim(),links:links};
+  var data={title:title,category:$('#f_cat').value,size:pickedSize(),brand:$('#f_brand').value.trim(),condition:$('#f_cond').value,color:$('#f_color').value.trim(),styleTags:$('#f_style').value.trim(),age:$('#f_age').value,pkg:$('#f_pkg').value,dsource:$('#f_dsource').value.trim(),source:pickedSource(),cost:cost===''?'':num(cost),price:price===''?'':num(price),notes:$('#f_notes').value.trim(),links:links};
   var saved;
   if(editingId){var it=findItem(editingId);saved=it;Object.keys(data).forEach(function(k){it[k]=data[k]});
     // links removed after a sale no longer need delisting
@@ -223,7 +224,7 @@ function copyText(s){
 }
 function copyListing(){
   var parts=[ $('#f_title').value.trim() ];
-  var line=[$('#f_cat').value,$('#f_size').value.trim()?('Size '+$('#f_size').value.trim()):'',$('#f_brand').value.trim()?('Brand: '+$('#f_brand').value.trim()):''].filter(Boolean).join(' · ');
+  var line=[$('#f_cat').value,pickedSize()?('Size '+pickedSize()):'',$('#f_brand').value.trim()?('Brand: '+$('#f_brand').value.trim()):''].filter(Boolean).join(' · ');
   if(line)parts.push(line);
   if($('#f_price').value.trim())parts.push('Price: '+money($('#f_price').value));
   if($('#f_notes').value.trim())parts.push('',$('#f_notes').value.trim());

@@ -12,7 +12,7 @@ function renderNotes(){
     '<div class="card" style="--accent:var(--lilac)"><h2>Log a message</h2><form data-form="note-add"><div class="form-grid">'+
     '<div class="ff"><label for="n_plat">Platform</label><select id="n_plat">'+PLATFORMS.map(function(pl){return '<option value="'+pl.key+'">'+pl.name+'</option>'}).join('')+'<option value="other">Other</option></select></div>'+
     '<div class="ff"><label for="n_from">From</label><input type="text" id="n_from" maxlength="60" placeholder="Buyer’s username"></div>'+
-    '<div class="ff full"><label for="n_text">Message or offer *</label><textarea id="n_text" maxlength="500" placeholder="e.g. Offered $30 for the denim jacket"></textarea><div class="msg bad" id="m_ntext" aria-live="polite"></div></div></div>'+
+    '<div class="ff full"><label for="n_text">Message or offer *</label><textarea id="n_text" maxlength="500" spellcheck="true" autocorrect="on" autocapitalize="sentences" placeholder="e.g. Offered $30 for the denim jacket"></textarea><div class="msg bad" id="m_ntext" aria-live="polite"></div></div></div>'+
     '<div class="btnrow2"><button class="btn" type="submit">Add to feed</button></div></form></div>'+
     '<div class="card" style="--accent:var(--sage)"><h2>Feed</h2>';
   if(!list.length)html+='<p>'+(all.length?'Nothing here for this filter.':'No messages logged yet.')+'</p>';

@@ -129,4 +129,5 @@ document.addEventListener('keydown',function(e){
   if(e.key!=='Enter'||!e.target)return;
   if(e.target.id==='f_src_new'){e.preventDefault();srcAdd()}
   else if(e.target.id==='f_newapp'){e.preventDefault();appAdd()}
+  else if(e.target.id==='f_size_new'){e.preventDefault();e.target.blur()}
 });

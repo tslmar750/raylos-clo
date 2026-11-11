@@ -385,11 +385,7 @@ body.filedrag [data-panel="items"]{outline:3px dashed var(--plum);outline-offset
 .klink .row{display:flex;gap:8px;margin-top:6px}
 .klink input{flex:1;min-width:0}
 .kphoto{display:flex;gap:10px;align-items:center;justify-content:space-between;font-size:14px}
-@media (max-width:700px){
-  dialog.kit{width:100%;max-width:none;margin:auto 0 0;border-radius:22px 22px 0 0;max-height:94vh}
-  dialog.kit .dlg{padding:18px 16px 20px}
-  .kit-head h2{font-size:32px}
-}
+/* phone bottom-sheet rules for the listing kit live in css/mobile.css */
 
 @media (max-width:1100px){
   .bento{grid-template-columns:repeat(2,minmax(0,1fr))}

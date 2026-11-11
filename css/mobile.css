@@ -156,3 +156,50 @@ html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
   /* ---- Settings ---- */
   .settings-grid{gap:12px}
 }
+
+/* ================= Step 4: listing kit (and the other .kit boxes) as a bottom sheet ================= */
+@media (max-width:900px){
+  dialog.kit{
+    width:100%;max-width:none;margin:auto 0 0;
+    max-height:calc(100dvh - 10px - var(--sat));
+    border-radius:22px 22px 0 0;
+    padding:0 var(--sar) 0 var(--sal);
+    box-shadow:0 -10px 40px rgba(60,50,40,.3);
+  }
+  dialog.kit[open]{animation:sheetUp .28s cubic-bezier(.2,.8,.2,1)}
+  dialog.kit[open]::backdrop{animation:fadeIn .28s ease}
+  dialog.kit.closing{transition:transform .2s ease-in;transform:translateY(100%)}
+  dialog.kit .dlg{padding:0 16px calc(16px + var(--sab))}
+
+  /* grab handle at the top: drag the top of the sheet down to close it */
+  dialog.kit .dlg::before{content:"";display:block;position:sticky;top:0;z-index:5;height:23px;margin:0 -16px;
+    background:linear-gradient(rgba(113,103,91,.4),rgba(113,103,91,.4)) center 10px/44px 5px no-repeat,var(--bone);
+    border-radius:22px 22px 0 0}
+
+  /* listing kit: photo + title smaller, app tabs stick under the handle */
+  .kit-head{gap:12px;margin-bottom:4px}
+  .kit-head .frame{width:52px!important}
+  .kit-head h2{font-size:28px;line-height:1.05;overflow-wrap:anywhere}
+  .kit-head p{font-size:13px}
+  .ktabs{position:sticky;top:23px;z-index:4;background:var(--bone);margin-top:6px;padding-top:6px;padding-bottom:8px}
+
+  /* copy boxes */
+  .kfield{padding:10px 12px 8px;margin-bottom:10px}
+  .kfield .btn{min-height:44px;padding:6px 20px}
+  .kfield textarea{font-size:16px}
+  .kopen{margin:10px 0}
+  .kopen .btn,.kopen .btn.small{min-height:44px}
+  .kopen p{flex:1 1 100%}
+  .klink .row{flex-wrap:wrap}
+  .klink .row .btn{flex:1 1 auto}
+
+  /* big "Copy next" button stays at the bottom, above the home bar */
+  .kstep{bottom:0;padding:10px 0 calc(8px + var(--sab));margin-top:12px}
+  .kstep .btn{min-height:54px}
+  dialog.kit .dlg-actions{margin-top:14px}
+}
+@keyframes sheetUp{from{transform:translateY(100%)}}
+@media (prefers-reduced-motion:reduce){
+  dialog.kit[open],dialog.kit[open]::backdrop{animation:none}
+  dialog.kit.closing{transition:none}
+}

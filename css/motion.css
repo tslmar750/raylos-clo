@@ -1,0 +1,98 @@
+/* ---------- motion ----------
+   Everything here is skipped when the visitor asks for reduced motion.
+   Entrance animations use fill "backwards" (never "both") so nothing is left
+   holding a transform afterwards; hover and drag styles keep working. */
+@media (prefers-reduced-motion:no-preference){
+
+/* login: panel writes itself in, the rack drifts like it's in a breeze */
+#login:not([hidden]) .login-panel>*{animation:m-rise .6s cubic-bezier(.2,.8,.2,1) backwards}
+#login .login-panel>:nth-child(2){animation-delay:.08s}
+#login .login-panel>:nth-child(3){animation-delay:.16s}
+#login .login-panel>:nth-child(4){animation-delay:.24s}
+#login .login-panel>:nth-child(5){animation-delay:.32s}
+#login .login-panel>:nth-child(6){animation-delay:.4s}
+.login-art img{transform-origin:50% 12%;animation:m-fade .9s ease backwards,m-sway 7s ease-in-out .9s infinite}
+.go .arr{transition:letter-spacing .25s cubic-bezier(.3,1.6,.5,1)}
+.go:hover .arr,.go:focus-visible .arr{letter-spacing:8px}
+
+/* switching between login and the app */
+#app:not([hidden]){animation:m-fade .45s ease}
+
+/* cat logo tilts its head when you point at it */
+.topbar .cat,.side-cat{transform-origin:50% 85%}
+.topbar .logo:hover .cat,.side-logo:hover .side-cat,.side-logo:focus-visible .side-cat{animation:m-tilt .7s ease-in-out}
+
+/* sidebar: the white pill fades in under the page you pick; icons wiggle on hover */
+.nav button[aria-current="page"]{animation:m-pill .35s ease}
+.nav button:hover svg,.side-out:hover svg,.iconbtn:hover svg{animation:m-tilt .6s ease-in-out}
+
+/* counts on the tabs pop in; the red "take down" count pings a few times */
+.nav .badge:not([hidden]){animation:m-pop .45s cubic-bezier(.3,1.6,.5,1)}
+.nav .badge.hot:not([hidden]){animation:m-pop .45s cubic-bezier(.3,1.6,.5,1),m-ping 1.6s ease-out .5s 3}
+
+/* opening a page: it fades in and its cards settle into place one after another.
+   #mainArea gets .entering from show() for about a second, so re-renders after
+   an edit don't replay this. */
+.entering [data-panel]:not([hidden]){animation:m-fade .3s ease}
+.entering .bento>.tile,.entering .tile.attn,.entering .card,.entering .bcard,.entering .bcol{animation:m-rise .45s cubic-bezier(.2,.8,.2,1) backwards}
+.entering .bento>.tile:nth-child(2),.entering .card:nth-child(2),.entering .bcard:nth-child(2),.entering .bcol:nth-child(2){animation-delay:.05s}
+.entering .bento>.tile:nth-child(3),.entering .card:nth-child(3),.entering .bcard:nth-child(3),.entering .bcol:nth-child(3){animation-delay:.1s}
+.entering .bento>.tile:nth-child(4),.entering .card:nth-child(4),.entering .bcard:nth-child(4),.entering .bcol:nth-child(4){animation-delay:.15s}
+.entering .bento>.tile:nth-child(5),.entering .card:nth-child(5),.entering .bcard:nth-child(5),.entering .bcol:nth-child(5){animation-delay:.2s}
+.entering .bento>.tile:nth-child(6),.entering .card:nth-child(6),.entering .bcard:nth-child(6){animation-delay:.25s}
+.entering .bento>.tile:nth-child(7),.entering .card:nth-child(7),.entering .bcard:nth-child(7){animation-delay:.3s}
+.entering .bento>.tile:nth-child(8),.entering .card:nth-child(8),.entering .bcard:nth-child(8){animation-delay:.35s}
+.entering .bento>.tile:nth-child(n+9),.entering .card:nth-child(n+9),.entering .bcard:nth-child(n+9){animation-delay:.4s}
+
+/* rings fill up when the dashboard opens */
+.entering .ring .rv{animation:m-ringfill 1.1s cubic-bezier(.2,.8,.2,1) .25s backwards}
+
+/* the little corner circles on cards breathe slowly */
+.card::before,.tile.sold::after{animation:m-breathe 8s ease-in-out infinite alternate}
+.card:nth-child(even)::before{animation-delay:-3s}
+
+/* the rack drawings on the dashboard and empty pages drift too */
+.tile.rack img,.card.empty img{transform-origin:50% 12%;animation:m-sway 7s ease-in-out infinite}
+
+/* board cards lift when you point at them; empty-photo hangers swing */
+.bcard{transition:transform .18s ease,box-shadow .18s ease}
+.bcard[draggable="true"]:hover{transform:translateY(-3px);box-shadow:0 6px 0 rgba(113,103,91,.14)}
+.bcard.dragging{transform:rotate(-2deg)}
+.frame.noph img{transform-origin:50% 8%}
+.frame.noph:hover img,.bcard:hover .frame.noph img{animation:m-swing 1s ease-in-out}
+
+/* buttons ease between colors and press in a little */
+.btn{transition:background-color .18s,border-color .18s,color .18s,transform .12s}
+.btn:active:not([disabled]),.subtabs button:active{transform:scale(.96)}
+
+/* pop-ups rise in; on phones the listing kit slides up like a sheet */
+dialog[open]{animation:m-dlg .3s cubic-bezier(.2,.8,.2,1)}
+dialog[open]::backdrop{animation:m-fade .3s ease}
+
+/* toast slides up from the bottom */
+.toast:not([hidden]){animation:m-toast .35s cubic-bezier(.2,.8,.2,1)}
+
+/* confetti when something sells (see celebrate() in js/app.js) */
+.confetti{position:fixed;inset:0;pointer-events:none;z-index:70;overflow:hidden}
+.confetti i{position:absolute;top:-18px;width:10px;height:15px;border-radius:3px;border:1.5px solid var(--brindle);animation:m-fall 1.8s cubic-bezier(.25,.6,.45,1) var(--d,0s) backwards}
+
+}
+
+@media (prefers-reduced-motion:no-preference) and (max-width:700px){
+  dialog.kit[open]{animation:m-sheet .35s cubic-bezier(.2,.8,.2,1)}
+}
+
+@keyframes m-fade{from{opacity:0}}
+@keyframes m-rise{from{opacity:0;transform:translateY(14px)}}
+@keyframes m-pill{from{background-color:transparent;box-shadow:none}}
+@keyframes m-ringfill{from{stroke-dasharray:0 100}}
+@keyframes m-pop{0%{transform:scale(0)}70%{transform:scale(1.18)}100%{transform:scale(1)}}
+@keyframes m-ping{0%{box-shadow:0 0 0 0 rgba(181,84,58,.55)}100%{box-shadow:0 0 0 9px rgba(181,84,58,0)}}
+@keyframes m-tilt{0%,100%{transform:rotate(0)}25%{transform:rotate(-9deg)}55%{transform:rotate(6deg)}80%{transform:rotate(-2deg)}}
+@keyframes m-sway{0%,100%{transform:rotate(-.7deg)}50%{transform:rotate(.7deg)}}
+@keyframes m-swing{0%,100%{transform:rotate(0)}20%{transform:rotate(12deg)}45%{transform:rotate(-8deg)}70%{transform:rotate(4deg)}}
+@keyframes m-breathe{from{transform:scale(1)}to{transform:scale(1.12)}}
+@keyframes m-dlg{from{opacity:0;transform:translateY(18px) scale(.97)}}
+@keyframes m-sheet{from{transform:translateY(100%)}}
+@keyframes m-toast{from{opacity:0;transform:translate(-50%,18px)}}
+@keyframes m-fall{0%{transform:translate(0,0) rotate(0)}100%{transform:translate(calc(var(--x,0) * 180px),108vh) rotate(var(--r,360deg))}}

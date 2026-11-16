@@ -1,0 +1,19 @@
+/* ---------- LOGIN ---------- */
+#login{min-height:100vh;display:flex;flex-direction:column}
+.login-body{flex:1;display:grid;grid-template-columns:1.1fr 1fr;align-items:center}
+.login-art{display:flex;align-items:center;justify-content:center;padding:1vh 3vw 4vh}
+.login-art img{max-height:58vh;max-width:78%;width:auto;height:auto}
+.login-panel{padding:1vh 6vw 4vh 2vw;max-width:640px}
+.login-word{height:64px;width:auto;margin:0 0 22px}
+.login-panel .sub{margin:0 0 30px;font-size:20px}
+.field{margin-bottom:26px}
+.field label{display:block;font-size:17px;margin-bottom:2px}
+.field input{width:100%;font:inherit;letter-spacing:inherit;font-size:21px;color:var(--brindle);background:transparent;border:0;border-bottom:2px solid var(--brindle);border-radius:0;padding:8px 0;outline:none}
+.field input::placeholder{color:#8A8074}
+.field input:focus{border-bottom-width:3px}
+.field input:focus-visible{outline:none}
+.row-links{display:flex;justify-content:flex-end;margin:-12px 0 20px}
+.go{font-size:26px;text-decoration:underline;text-underline-offset:6px;text-decoration-thickness:2px;margin-top:6px}
+.error{min-height:26px;margin:0 0 6px;font-size:16px;font-weight:700}
+.note{margin:22px 0 0;font-size:16px}
+.login-foot{margin-top:34px;font-size:16px}

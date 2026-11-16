@@ -1,0 +1,42 @@
+/* FONTS: headings use Karumbi (open-source, OFL v1.1, assets/fonts/karumbi.woff, unmodified).
+   Body text uses Open Sans (+23 spacing = 0.023em), loaded from Google Fonts. */
+@font-face{font-family:'Karumbi';src:url(../assets/fonts/karumbi.woff) format('woff');font-weight:400;font-style:normal;font-display:swap}
+
+:root{
+  --bone:#F8F4E7; --lilac:#D3CBDE; --plum:#988AA4; --sage:#D1D8B7;
+  --olive:#A8B378; --fawn:#C49D7F; --brindle:#71675B; --white:#FFFFFF;
+  --line:#E3DCCB; --brindle-dark:#5C5348; --oat:#F0EBDB;
+  --body:'Open Sans',Arial,Helvetica,sans-serif;
+  --head:'Karumbi',Georgia,'Times New Roman',serif;
+  --topbar-h:60px;
+}
+*{box-sizing:border-box}
+html{background:#F8F4E7}
+html,body{margin:0;height:100%}
+body{letter-spacing:0.023em;background:#F8F4E7;background:var(--bone);color:#71675B;color:var(--brindle);font-family:var(--body);font-size:17px;line-height:1.5}
+[hidden]{display:none !important}
+button{font:inherit;letter-spacing:inherit;color:inherit;background:none;border:0;padding:0;cursor:pointer}
+a{color:inherit}
+:focus-visible{outline:3px solid var(--brindle);outline-offset:3px;border-radius:4px}
+img{display:block}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+h1,h2,h3{font-family:var(--head);font-weight:400;letter-spacing:normal;margin:0}
+h1{font-size:56px;line-height:1.1}
+h2{font-size:42px;line-height:1.1;margin-bottom:12px}
+h3{font-size:30px;line-height:1.15;margin-bottom:6px}
+.hello-text{font-size:76px;line-height:1;margin:0 0 6px}
+
+/* top bar: icon only */
+.topbar{display:flex;align-items:center;justify-content:center;height:var(--topbar-h);padding:0 20px;position:relative}
+.mockbadge{position:absolute;right:20px;top:50%;transform:translateY(-50%);border:1.5px solid var(--brindle);border-radius:999px;padding:2px 14px;font-size:14px;background:var(--white)}
+.topbar a,.topbar .logo{display:flex;align-items:center;text-decoration:none}
+.topbar .cat{height:46px;width:auto}
+
+/* buttons */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;background:var(--brindle);color:var(--bone);border:2px solid var(--brindle);border-radius:999px;padding:8px 20px;font-size:17px;font-weight:700;cursor:pointer;text-decoration:none}
+.btn:hover{background:var(--brindle-dark);border-color:var(--brindle-dark)}
+.btn.secondary{background:transparent;color:var(--brindle)}
+.btn.secondary:hover{background:var(--white)}
+.btn.small{padding:3px 14px;font-size:15px}
+.btn[disabled]{opacity:.5;cursor:not-allowed}
+.linkbtn{font-size:16px;text-decoration:underline;text-underline-offset:3px}

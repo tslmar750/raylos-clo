@@ -1,0 +1,32 @@
+/* ---------- photos + frames ---------- */
+.frame{display:block;border:2px solid var(--brindle);border-radius:14px;padding:5px;background:var(--bone);box-shadow:3px 4px 0 rgba(113,103,91,.18);cursor:pointer}
+.frame img{width:100%;aspect-ratio:4/5;object-fit:cover;border-radius:8px;display:block;background:var(--white)}
+.frame.noph{aspect-ratio:4/5;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;font-size:12px;text-align:center;line-height:1.2}
+.frame.noph img{width:62%;aspect-ratio:auto;object-fit:contain;background:transparent;border-radius:0}
+.th{width:40px;height:50px;object-fit:cover;border:1.5px solid var(--brindle);border-radius:8px;background:var(--bone);flex:none}
+.th.sk{object-fit:contain;padding:4px;background:var(--bone)}
+.th.lg{width:72px;height:90px}
+.itemcell .th{width:44px;height:55px}
+.tile.ship li .th{width:38px;height:48px}
+.pcard{display:flex;gap:16px;align-items:flex-start}
+.pcard .pc-body{flex:1;min-width:0}
+.bcard .bmain{display:flex;gap:10px;align-items:flex-start}
+.bcard .bmain .frame{width:84px;flex:none}
+.bcard .binfo{flex:1;min-width:0}
+.bcard .t{font-weight:700;font-size:15px;line-height:1.25}
+.bcard .m1{font-size:13px;margin-top:3px;line-height:1.35}
+.bcard .price{font-weight:700;margin-top:4px}
+.tile.arrivals{grid-column:1/3}
+.tile.earners{grid-column:3/5}
+.pfs{display:grid;gap:14px;margin-top:12px}
+.tile.arrivals .pfs{grid-template-columns:repeat(4,minmax(0,1fr))}
+.tile.earners .pfs{grid-template-columns:repeat(3,minmax(0,1fr))}
+.pf{position:relative;display:flex;flex-direction:column;gap:6px;text-align:left;cursor:pointer;min-width:0}
+.pf .pt{font-weight:700;font-size:15px;line-height:1.25}
+.pf .pp{font-size:14px}
+.pf .rk{position:absolute;left:-6px;top:-8px;z-index:2;width:30px;height:30px;border-radius:50%;background:var(--white);border:2px solid var(--brindle);font-family:var(--body);font-weight:700;letter-spacing:0;display:flex;align-items:center;justify-content:center;font-size:15px}
+.photobox{display:flex;gap:18px;align-items:center;background:var(--white);border:2px solid var(--brindle);border-radius:18px;padding:14px}
+.frame.big{width:116px;flex:none;cursor:default}
+.pb-text{min-width:0}.pb-text p{font-size:14px;margin:4px 0 8px}
+.pb-btns{display:flex;gap:8px;flex-wrap:wrap}
+.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:var(--brindle);color:var(--bone);padding:10px 20px;border-radius:999px;z-index:60;font-size:15px;max-width:90vw;text-align:center}

@@ -1,0 +1,63 @@
+/* ---------- listing kit ---------- */
+dialog.kit{max-width:640px}
+.kit-head{display:flex;gap:14px;align-items:center;margin-bottom:6px}
+.kit-head .frame{width:64px;cursor:default}
+.kit-head h2{font-size:38px;margin:0}
+.kit-head p{margin:0;font-size:14px}
+.kfield{background:var(--white);border:1.5px solid var(--brindle);border-radius:14px;padding:8px 10px 6px;margin-bottom:8px}
+.khead{display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;gap:8px}
+.khead b{font-size:14px}
+.kfield textarea{border:1px solid var(--line);border-radius:8px;padding:6px 8px;font-size:15px;min-height:0;resize:vertical;width:100%;line-height:1.4}
+.kfield .btn{min-height:38px;padding:4px 18px;font-size:15px}
+.kcount{font-size:13px;min-height:18px}
+.kfield.cur{background:var(--sage)}
+.kgroup{font-size:13px;margin:12px 0 6px;font-weight:700}
+.kempty{font-size:13px;margin:6px 0 4px}
+.tpl{border-top:1px solid var(--line);padding:10px 0;display:grid;gap:8px}
+.gmcard{display:flex;gap:10px;align-items:flex-start;border:1.5px solid var(--brindle);border-radius:14px;padding:8px 10px;margin-bottom:8px;background:var(--white);cursor:pointer}
+.gmcard input{margin-top:4px;flex:none}
+.gmcard small{display:block;font-size:13px}
+.gmcard .gm-new{font-weight:700}
+.gmsteps li{margin-bottom:6px}
+.syncstat{font-size:13px;margin-left:10px;opacity:.85}
+.syncstat.bad{color:#B5543A;font-weight:700;cursor:pointer;text-decoration:underline}
+.badge{display:inline-block;min-width:22px;height:22px;border-radius:999px;background:var(--brindle);color:var(--bone);font:700 13px/22px var(--body);padding:0 6px;margin-left:6px;vertical-align:middle;text-align:center;letter-spacing:0}
+.badge.hot{background:#B5543A}
+.badge[hidden]{display:none}
+.tile.attn{margin-bottom:20px;background:#F3E4D6}
+.tile.attn ul{list-style:none;padding:0;margin:10px 0 0;display:grid;gap:8px}
+.tile.attn li{display:flex;align-items:center;gap:12px;background:var(--white);border-radius:999px;padding:8px 14px;font-size:16px}
+.tile.attn li .txt{flex:1;min-width:0}
+.tile.attn li.hot{border:2px solid #B5543A}
+.dl-row{display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap;margin:6px 0}
+.dl-row label{display:flex;gap:8px;align-items:center}
+.photobox.dropping{background:var(--sage);outline:3px dashed var(--brindle);outline-offset:2px;border-radius:14px}
+.bcard.dropping,tr.dropping,li.dropping{outline:3px dashed var(--plum);outline-offset:2px}
+#dropHint{display:none;position:fixed;left:50%;bottom:22px;transform:translateX(-50%);z-index:60;background:var(--brindle);color:var(--bone);border-radius:999px;padding:10px 20px;font-weight:700;font-size:15px;max-width:92vw;text-align:center;box-shadow:0 6px 18px rgba(0,0,0,.25);pointer-events:none}
+body.filedrag #dropHint{display:block}
+body.filedrag [data-panel="items"]{outline:3px dashed var(--plum);outline-offset:-6px;border-radius:18px}
+.waitlist label small{font-size:13px}
+.btnrow2{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
+#p_result .chip{cursor:pointer;font:inherit;font-size:13px;color:inherit}
+.kprice{background:var(--bone);border:1.5px dashed var(--brindle);border-radius:14px;padding:8px 12px;margin-bottom:6px}
+.kprice div{display:flex;justify-content:space-between;align-items:baseline;gap:10px}
+.kprice b{font-size:14px}
+.kprice span{font-size:22px;font-weight:700}
+.kprice small{display:block;font-size:13px}
+.more{border:1.5px dashed var(--brindle);border-radius:14px;padding:8px 12px;background:var(--white)}
+.more summary{cursor:pointer;font-weight:700;padding:2px 0}
+.kstep{position:sticky;bottom:0;background:var(--bone);padding:10px 0 6px;border-top:1.5px solid var(--line);margin-top:10px;z-index:3}
+.kstep .btn{width:100%;justify-content:center;min-height:50px;font-size:17px}
+.kstep p{margin:6px 0 0;font-size:13px;text-align:center}
+.kopen .btn.small{min-height:36px}
+.kopen{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin:12px 0 10px}
+.kopen p{margin:0;font-size:13px}
+.klink{border:1.5px dashed var(--brindle);border-radius:14px;padding:10px 12px;background:var(--white)}
+.klink .row{display:flex;gap:8px;margin-top:6px}
+.klink input{flex:1;min-width:0}
+.kphoto{display:flex;gap:10px;align-items:center;justify-content:space-between;font-size:14px}
+@media (max-width:700px){
+  dialog.kit{width:100%;max-width:none;margin:auto 0 0;border-radius:22px 22px 0 0;max-height:94vh}
+  dialog.kit .dlg{padding:18px 16px 20px}
+  .kit-head h2{font-size:32px}
+}

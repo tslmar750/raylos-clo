@@ -1,0 +1,40 @@
+/* ---------- APP SHELL (framed window: sidebar + content) ---------- */
+.k{font-family:var(--head);letter-spacing:normal}
+#app{min-height:100vh;background:var(--lilac);padding:22px}
+.appframe{display:grid;grid-template-columns:250px minmax(0,1fr);max-width:1640px;min-height:calc(100vh - 44px);margin:0 auto;background:var(--bone);border-radius:36px;box-shadow:0 24px 60px rgba(92,83,72,.18)}
+.amp{font-family:var(--body);font-size:.6em;letter-spacing:.023em}
+
+/* sidebar: its own soft panel that stays put while the page scrolls */
+.side{position:sticky;top:36px;align-self:start;height:calc(100vh - 72px);margin:14px 0 14px 14px;padding:22px 14px 16px;background:var(--oat);border-radius:28px;display:flex;flex-direction:column;gap:16px;overflow-y:auto;scrollbar-width:none}
+.side svg{width:24px;height:24px;flex:none;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.side-logo{display:flex;align-items:center;justify-content:center;gap:8px;text-decoration:none;padding:0 4px}
+.side-cat{height:46px;width:auto}
+.side-word{height:38px;width:auto}
+.side-user{display:flex;align-items:center;gap:10px;padding:10px 10px;background:rgba(255,255,255,.55);border-radius:18px}
+.avatar{width:42px;height:42px;flex:none;border-radius:50%;background:var(--lilac);border:2px solid var(--brindle);display:flex;align-items:center;justify-content:center;font:700 18px/1 var(--body);letter-spacing:0}
+.ah-left{display:flex;flex-direction:column;min-width:0;font-size:14px;line-height:1.3}
+.ah-left .who{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:700}
+.ah-left .syncstat{margin-left:0;font-size:12px}
+.ah-left .mockbadge{position:static;transform:none;align-self:flex-start;font-size:12px;padding:0 10px;margin-bottom:4px}
+.nav{display:flex;flex-direction:column;gap:4px}
+.nav button,.side-out{display:flex;align-items:center;gap:12px;width:100%;padding:8px 12px;border-radius:16px;font-family:var(--head);font-size:29px;line-height:1.05;letter-spacing:normal;text-align:left;transition:background-color .2s}
+.nav .lbl{flex:1;min-width:0}
+.nav .badge{margin-left:0;flex:none}
+.nav button:hover,.side-out:hover{background:rgba(255,255,255,.6)}
+.nav button[aria-current="page"]{background:var(--white);box-shadow:0 2px 0 rgba(113,103,91,.1)}
+.nav button[aria-current="page"] svg{color:var(--olive);stroke-width:2.2}
+.side-out{margin-top:auto}
+
+/* content column: search + bell on top, page below */
+.content{min-width:0;display:flex;flex-direction:column}
+.apphead{display:flex;align-items:center;gap:14px;padding:26px 40px 0}
+.apphead svg{width:22px;height:22px;flex:none;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.gsearch{flex:1;max-width:460px;display:flex;align-items:center;gap:10px;background:var(--white);border:1.5px solid var(--brindle);border-radius:999px;padding:0 18px}
+.gsearch input[type=search]{border:0;border-radius:0;background:transparent;padding:10px 0;font-size:16px;outline:none}
+.gsearch:focus-within{outline:3px solid var(--brindle);outline-offset:3px}
+.ah-right{margin-left:auto;display:flex;gap:10px;align-items:center}
+.iconbtn{position:relative;width:46px;height:46px;flex:none;border-radius:50%;background:var(--white);border:1.5px solid var(--brindle);display:flex;align-items:center;justify-content:center}
+.iconbtn:hover{background:var(--sage)}
+.iconbtn .badge{position:absolute;top:-5px;right:-7px;margin:0}
+.main{max-width:1380px;width:100%;margin:0 auto;padding:22px 40px 30px;min-width:0;flex:1}
+.foot{text-align:center;font-size:30px;padding:6px 0 30px}

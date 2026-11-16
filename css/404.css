@@ -1,0 +1,45 @@
+@font-face{font-family:'Karumbi';src:url(../assets/fonts/karumbi.woff) format('woff');font-display:swap}
+:root{--bone:#F8F4E7;--lilac:#D3CBDE;--sage:#D1D8B7;--brindle:#71675B;--white:#fff;--head:'Karumbi',Georgia,serif;--body:'Open Sans',Arial,sans-serif}
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%}
+body{background:#F8F4E7;background:var(--bone);color:#71675B;color:var(--brindle);font-family:var(--body);font-size:18px;line-height:1.5;letter-spacing:.023em;overflow-x:hidden}
+.page{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:26px 20px 34px;text-align:center}
+.chip{display:inline-block;background:var(--white);border:1.5px solid var(--brindle);border-radius:999px;padding:0 14px;font-size:15px}
+.stage{position:relative;width:min(560px,90vw);margin:8px auto 0}
+.window{position:relative;width:100%;aspect-ratio:1/.9;overflow:hidden}
+.ledge{position:absolute;left:-1%;width:102%;bottom:-2px;height:14px;z-index:4;pointer-events:none}
+.catbtn{position:absolute;left:0;right:0;bottom:7px;display:block;background:none;border:0;padding:0;cursor:pointer;-webkit-tap-highlight-color:transparent;transform:translateY(108%);transition:transform .9s cubic-bezier(.2,1.25,.4,1)}
+.up .catbtn{transform:translateY(0)}
+.duck .catbtn{transform:translateY(34%);transition-duration:.55s}
+.catbtn:focus-visible{outline:3px solid var(--brindle);outline-offset:4px;border-radius:30px}
+.catsvg{display:block;width:100%;height:auto;overflow:visible;user-select:none}
+.catsvg *{transform-box:view-box}
+.headg{transform-origin:500px 720px;transition:transform .8s cubic-bezier(.3,.8,.3,1)}
+.patch{transition:transform .4s ease-out}
+.eye{transition:transform .12s}
+.blink .eye{animation:blink .24s ease-in-out}
+@keyframes blink{0%,100%{transform:scaleY(1)}45%,55%{transform:scaleY(.07)}}
+.pop .eye{animation:eyepop .45s ease-out}
+@keyframes eyepop{0%{transform:scale(1)}35%{transform:scale(1.12,1.2)}100%{transform:scale(1)}}
+.wh{transform-origin:var(--px) var(--py)}
+.twitch .wh{animation:twitch .5s ease-in-out 2}
+.twitch .wh:nth-of-type(2){animation-delay:.08s}.twitch .wh:nth-of-type(3){animation-delay:.04s}.twitch .wh:nth-of-type(4){animation-delay:.12s}
+@keyframes twitch{0%,100%{transform:rotate(0)}30%{transform:rotate(var(--a))}65%{transform:rotate(calc(var(--a) * -.6))}}
+.hop .catbtn{animation:hop .6s cubic-bezier(.3,.7,.3,1)}
+@keyframes hop{0%{transform:translateY(0)}30%{transform:translateY(-8%)}60%{transform:translateY(0)}78%{transform:translateY(-1.5%)}100%{transform:translateY(0)}}
+.bubble{position:absolute;right:-2%;top:2%;z-index:5;background:var(--white);border:2px solid var(--brindle);border-radius:22px 22px 22px 4px;padding:2px 18px 6px;font-family:var(--head);font-size:34px;letter-spacing:normal;line-height:1.2;opacity:0;transform:translateY(8px) scale(.9);transition:opacity .25s,transform .25s;pointer-events:none}
+.show .bubble{opacity:1;transform:none}
+.qs{position:absolute;left:0;right:0;top:0;height:30%;z-index:3;pointer-events:none}
+.qs span{position:absolute;font-family:var(--head);font-size:64px;letter-spacing:normal;opacity:0}
+.qs span:nth-child(1){left:10%;top:18%}.qs span:nth-child(2){left:46%;top:2%;font-size:84px}.qs span:nth-child(3){left:82%;top:20%}
+.ask .qs span{animation:q 2.6s ease-out both}
+.ask .qs span:nth-child(2){animation-delay:.25s}.ask .qs span:nth-child(3){animation-delay:.5s}
+@keyframes q{0%{opacity:0;transform:translateY(30px) rotate(-8deg) scale(.8)}25%{opacity:.9;transform:none}75%{opacity:.8}100%{opacity:0;transform:translateY(-40px) rotate(8deg)}}
+h1{font-family:var(--head);font-weight:400;letter-spacing:normal;font-size:clamp(46px,8vw,76px);line-height:1.05;margin:14px 0 6px}
+p.sub{margin:0 0 22px;font-size:19px;max-width:30em}
+.btn{display:inline-flex;align-items:center;justify-content:center;background:var(--brindle);color:var(--bone);border:2px solid var(--brindle);border-radius:999px;padding:9px 26px;font-size:18px;font-weight:700;text-decoration:none;font-family:var(--body);letter-spacing:.023em}
+.btn:hover{background:#5C5348;border-color:#5C5348}
+.btn:focus-visible{outline:3px solid var(--brindle);outline-offset:4px}
+.motto{font-family:var(--head);font-size:30px;letter-spacing:normal;margin-top:30px}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+@media (prefers-reduced-motion:reduce){.catbtn{transform:none !important;transition:none}.headg,.patch,.eye{transition:none}.blink .eye,.pop .eye,.twitch .wh,.hop .catbtn,.ask .qs span{animation:none}}

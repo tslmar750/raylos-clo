@@ -22,6 +22,7 @@ var SHELL=[
   'css/mobile.css',
   'fonts/karumbi.woff',
   'js/attention.js',
+  'js/camera.js',
   'js/auth.js',
   'js/cloud.js',
   'js/core.js',

@@ -117,7 +117,14 @@ function tx(mode,fn){return idb().then(function(d){return new Promise(function(r
 function photoPutLocal(id,blob){return tx('readwrite',function(s){return s.put(blob,id)})}
 function photoDelLocal(id){return tx('readwrite',function(s){return s.delete(id)})}
 function photoGetLocal(id){return tx('readonly',function(s){return s.get(id)})}
-function photoPut(id,blob){return photoPutLocal(id,blob).then(function(r){if(CLOUD.on&&CLOUD.uid){var it=findItem(id);if(it)delete it.photoCloud;cloudPhotoUp(id,blob)}return r})}
+/* An item's cover photo is saved under the item's id. Extra photos are saved under "<item id>_<random>" and listed in it.photos=[{k:key,c:cloudFlag}]. */
+var photoMoving=0; // >0 while the item form is moving photos between keys
+function photoOwner(k){var it=findItem(k);if(it)return {it:it,e:null};for(var i=0;i<state.items.length;i++){var x=state.items[i],l=x.photos||[];for(var j=0;j<l.length;j++)if(l[j].k===k)return {it:x,e:l[j]}}return null}
+function cloudFlag(k){var o=photoOwner(k);return o?(o.e?o.e.c:o.it.photoCloud):undefined}
+function setCloudFlag(k,v){var o=photoOwner(k);if(!o)return;var t=o.e||o.it,f=o.e?'c':'photoCloud';if(v===undefined)delete t[f];else t[f]=v}
+function extraKeys(it){return (it.photos||[]).map(function(p){return p.k})}
+function photoSrcs(it){var a=[],s=photoSrc(it);if(s)a.push(s);extraKeys(it).forEach(function(k){if(PH[k])a.push(PH[k])});return a}
+function photoPut(id,blob){return photoPutLocal(id,blob).then(function(r){if(CLOUD.on&&CLOUD.uid){setCloudFlag(id,undefined);cloudPhotoUp(id,blob)}return r})}
 function photoDel(id){return photoDelLocal(id).then(function(r){cloudPhotoDel(id);return r})}
 function photosClear(){Object.keys(PH).forEach(clearPhoto);return tx('readwrite',function(s){return s.clear()}).catch(function(){})}
 function photoAll(){return idb().then(function(d){return new Promise(function(res,rej){var out={},c=d.transaction('photos','readonly').objectStore('photos').openCursor();c.onsuccess=function(){var cur=c.result;if(cur){out[cur.key]=cur.value;cur.continue()}else res(out)};c.onerror=function(){rej(c.error)}})})}

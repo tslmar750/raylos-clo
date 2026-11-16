@@ -70,49 +70,114 @@ document.addEventListener('dragend',clearDropUI);
 document.addEventListener('drop',function(e){
   if(!hasFiles(e)&&!hasOutside(e))return; e.preventDefault();
   var t=dropTarget(e), dt=e.dataTransfer, file=hasFiles(e)?firstFile(dt):null, url=file?'':dropUrl(dt); clearDropUI();
+  if(file&&t.kind==='dlg'&&$('#photoFile')){handlePhotoFiles(Array.prototype.filter.call(dt.files,isImageFile).length?Array.prototype.filter.call(dt.files,isImageFile):[file]);return}
   if(file){useDroppedFile(t,file);return}
   if(url){toast('Getting that picture…');fileFromUrl(url).then(function(f){useDroppedFile(t,f)},function(){toast('That website won’t let me copy its picture. Save the picture to your Mac first, then drag the saved file in.')});return}
   toast('I couldn’t read that drop. Click Add photo and choose the picture instead.');
 });
 document.addEventListener('paste',function(e){
   var d=$('#itemDlg'); if(!d||!d.open||!$('#photoFile'))return;
-  var f=firstFile(e.clipboardData); if(f&&isImageFile(f)){e.preventDefault();handlePhotoFile(f)}
+  var fs=e.clipboardData&&e.clipboardData.files?Array.prototype.filter.call(e.clipboardData.files,isImageFile):[]; if(fs.length){e.preventDefault();handlePhotoFiles(fs)}
 });
 
 /* ---- item dialog ---- */
-var editingId=null, pendingPhoto=null, removePhotoFlag=false;
+var editingId=null, gal=[], galGen=0, MAXPHOTOS=12;
+/* gal = the photos shown in the open item form, cover first: {key:'saved key' or '', url, blob (new ones only)} */
 function editingItem(){return editingId?findItem(editingId):null}
-function currentPhotoSrc(){if(pendingPhoto)return pendingPhoto.url;if(removePhotoFlag)return '';var it=editingItem();return it?photoSrc(it):''}
+function galFrom(it){
+  var g=[]; if(!it)return g; var s=photoSrc(it);
+  if(s)g.push({key:it.id,url:s});
+  extraKeys(it).forEach(function(k){if(PH[k])g.push({key:k,url:PH[k]})});
+  return g;
+}
+function galClear(){gal.forEach(function(p){if(p.blob)URL.revokeObjectURL(p.url)});gal=[]}
 function updatePhotoUI(){
-  var pv=$('#photoPreview'); if(!pv)return; var src=currentPhotoSrc(), cat=$('#f_cat')?$('#f_cat').value:'Tops';
+  var pv=$('#photoPreview'); if(!pv)return; var src=gal.length?gal[0].url:'', cat=$('#f_cat')?$('#f_cat').value:'Tops';
   pv.className='frame big'+(src?'':' noph');
-  pv.innerHTML=src?'<img src="'+src+'" alt="Photo preview">':'<img src="'+IMG[iconFor(cat)]+'" alt=""><span>No photo yet</span>';
-  $('#photoBtn').innerHTML=src?'<span class="hint-desk">Change photo</span><span class="hint-phone">Choose another</span>':'<span class="hint-desk">Add photo</span><span class="hint-phone">Choose photo</span>'; if($('#camBtn'))$('#camBtn').textContent=src?'Retake photo':'Take photo'; $('#photoRm').hidden=!src;
+  pv.innerHTML=src?'<img src="'+src+'" alt="Cover photo">':'<img src="'+IMG[iconFor(cat)]+'" alt=""><span>Tap to add photos</span>'; pv.disabled=gal.length>=MAXPHOTOS; pv.setAttribute('aria-label',src?'Add more photos':'Add photos');
+  var full=gal.length>=MAXPHOTOS;
+  $('#photoBtn').innerHTML=src?'<span class="hint-desk">Add more photos</span><span class="hint-phone">Choose more</span>':'<span class="hint-desk">Add photos</span><span class="hint-phone">Choose photos</span>';
+  $('#photoBtn').disabled=full; if($('#camBtn')){$('#camBtn').textContent=src?'Take more':'Take photos';$('#camBtn').disabled=full}
+  var st=$('#photoStrip');
+  st.hidden=!gal.length;
+  st.innerHTML=gal.map(function(p,i){
+    return '<li class="pthumb'+(i?'':' cover')+'"><button type="button" class="pt-img" data-action="cover-photo" data-i="'+i+'" aria-label="'+(i?'Make photo '+(i+1)+' the cover':'Photo 1 is the cover')+'"><img src="'+p.url+'" alt="" draggable="false">'+(i?'':'<span class="pt-tag">Cover</span>')+'</button>'+
+      '<button type="button" class="pt-x" data-action="remove-photo" data-i="'+i+'" aria-label="Remove photo '+(i+1)+'">×</button></li>';
+  }).join('');
+  $('#photoCount').textContent=gal.length>1?gal.length+' photos. Tap one to make it the cover.':'';
 }
-function handlePhotoFile(file){
-  var m=$('#m_photo'); if(!m)return; m.textContent=''; if(!file)return;
-  (isImageFile(file)?Promise.resolve(true):sniffHeic(file)).then(function(isImg){
-    if(!isImg){m.textContent='That file isn’t a picture. Photos from your Mac or iPhone (HEIC, JPG, PNG, WebP, GIF) all work.';return}
-    if(file.size>40*1024*1024){m.textContent='That picture is very large. Choose one under 40 MB.';return}
-    m.textContent='Preparing the picture…';
-    return resizeImage(file,900,function(t){m.textContent=t}).then(function(blob){if(pendingPhoto)URL.revokeObjectURL(pendingPhoto.url);pendingPhoto={blob:blob,url:URL.createObjectURL(blob)};removePhotoFlag=false;m.textContent='';updatePhotoUI()});
-  }).catch(function(err){m.textContent=photoErr(err,file)});
+function handlePhotoFiles(files){
+  var m=$('#m_photo'); if(!m)return; m.textContent='';
+  files=Array.prototype.slice.call(files||[]).filter(Boolean); if(!files.length)return;
+  var room=MAXPHOTOS-gal.length;
+  if(room<=0){m.textContent='That’s the most photos one item can have ('+MAXPHOTOS+'). Remove one to add another.';return}
+  var skipped=files.length>room; files=files.slice(0,room);
+  var errs=[], gen=galGen;
+  m.textContent=files.length>1?'Preparing '+files.length+' pictures…':'Preparing the picture…';
+  files.reduce(function(chain,file){return chain.then(function(){
+    return (isImageFile(file)?Promise.resolve(true):sniffHeic(file)).then(function(isImg){
+      if(!isImg){errs.push('That file isn’t a picture. Photos from your Mac or iPhone (HEIC, JPG, PNG, WebP, GIF) all work.');return}
+      if(file.size>40*1024*1024){errs.push('That picture is very large. Choose one under 40 MB.');return}
+      return resizeImage(file,900,function(t){m.textContent=t}).then(function(blob){
+        if(gen!==galGen||!$('#photoStrip'))return; addGalBlob(blob);
+      });
+    }).catch(function(err){errs.push(photoErr(err,file))});
+  })},Promise.resolve()).then(function(){
+    if(gen!==galGen||!$('#m_photo'))return;
+    m.textContent=errs.length?errs[0]+(errs.length>1?' ('+errs.length+' pictures didn’t work.)':''):(skipped?'Only the first '+files.length+' were added. One item can have '+MAXPHOTOS+' photos.':'');
+  });
 }
+function addGalBlob(blob){if(gal.length>=MAXPHOTOS)return false;gal.push({key:'',blob:blob,url:URL.createObjectURL(blob)});updatePhotoUI();return true}
+var PHONE=window.matchMedia('(pointer:coarse)').matches;
+function handlePhotoFile(file){handlePhotoFiles(file?[file]:[])}
+function removeGalPhoto(i){var p=gal[i];if(!p)return;if(p.blob)URL.revokeObjectURL(p.url);gal.splice(i,1);updatePhotoUI()}
+function coverGalPhoto(i){if(i>0&&gal[i]){gal.unshift(gal.splice(i,1)[0]);updatePhotoUI()}}
 function setItemPhotoFromFile(id,file){
   var it=findItem(id); if(!it)return;
   (isImageFile(file)?Promise.resolve(true):sniffHeic(file)).then(function(isImg){
     if(!isImg){toast('That file isn’t a picture.');return}
     toast('Preparing the picture…');
     return resizeImage(file,900,function(t){toast(t)}).then(function(blob){
-      setPhoto(it.id,blob); it.photoRef='';
-      return photoPut(it.id,blob).catch(function(){toast('This browser couldn’t save the picture. It will disappear when you close the page.')}).then(function(){save();render();toast('Photo added to “'+it.title+'”.')});
+      var key=it.id, extra=!!photoSrc(it);
+      if(extra){
+        if(photoSrcs(it).length>=MAXPHOTOS){toast('“'+it.title+'” already has '+MAXPHOTOS+' photos.');return}
+        key=it.id+'_'+uid(); it.photos=(it.photos||[]).concat([{k:key}]);
+      } else it.photoRef='';
+      setPhoto(key,blob);
+      return photoPut(key,blob).catch(function(){toast('This browser couldn’t save the picture. It will disappear when you close the page.')}).then(function(){save();render();toast((extra?'Another photo added to “':'Photo added to “')+it.title+'”.')});
     });
   }).catch(function(err){toast(photoErr(err,file))});
 }
+/* Save the form's photos: gal[0] goes under the item id, the rest become extra photos. */
 function applyPhoto(it){
-  if(pendingPhoto){setPhoto(it.id,pendingPhoto.blob);it.photoRef='';photoPut(it.id,pendingPhoto.blob).catch(function(){toast('This browser couldn’t save the picture. It will disappear when you close the page.')});pendingPhoto=null}
-  else if(removePhotoFlag){clearPhoto(it.id);it.photoRef='';photoDel(it.id).catch(function(){})}
-  removePhotoFlag=false;
+  var g=gal.slice(); gal=[]; galGen++;
+  var oldKeys=(photoSrc(it)?[it.id]:[]).concat(extraKeys(it)), oldPhotos=it.photos||[];
+  var plan=g.map(function(p,i){
+    var target=i===0?it.id:(p.key&&p.key!==it.id?p.key:it.id+'_'+uid());
+    return {p:p,target:target,same:p.key===target};
+  });
+  var unchanged=plan.length===oldKeys.length&&plan.every(function(x,i){return x.same&&x.target===oldKeys[i]});
+  if(unchanged)return;
+  if(!plan.length||!plan[0].same)it.photoRef='';
+  it.photos=plan.slice(1).map(function(x){var was=oldPhotos.filter(function(o){return o.k===x.target})[0];return x.same&&was?was:{k:x.target}});
+  var used={}; plan.forEach(function(x){used[x.target]=1});
+  // read every photo that moves before anything is overwritten
+  photoMoving++;
+  Promise.all(plan.map(function(x){
+    if(x.same)return null;
+    return x.p.blob?Promise.resolve(x.p.blob):fetch(x.p.url).then(function(r){return r.blob()});
+  })).then(function(blobs){
+    oldKeys.forEach(function(k){if(!used[k]){clearPhoto(k);photoDel(k).catch(function(){})}});
+    var puts=[];
+    plan.forEach(function(x,i){
+      if(x.same)return;
+      setPhoto(x.target,blobs[i]);
+      puts.push(photoPut(x.target,blobs[i]));
+      if(x.p.blob)URL.revokeObjectURL(x.p.url);
+    });
+    render();
+    return Promise.all(puts).catch(function(){toast('This browser couldn’t save the pictures. They will disappear when you close the page.')});
+  }).catch(function(){toast('Couldn’t save the photo changes. Try again.')}).then(function(){photoMoving--;save()});
 }
 function opt(list,sel){return list.map(function(x){return '<option'+(x===sel?' selected':'')+'>'+esc(x)+'</option>'}).join('')}
 function linkField(pl,it){
@@ -147,12 +212,12 @@ function appAdd(){
 }
 function openItem(id){
   var it=id?findItem(id):null; editingId=id||null;
-  if(pendingPhoto){URL.revokeObjectURL(pendingPhoto.url);pendingPhoto=null} removePhotoFlag=false;
+  galClear(); gal=galFrom(it); galGen++;
   var d=$('#itemDlg');
   var links=PLATFORMS.map(function(pl){return linkField(pl,it)}).join('');
-  d.innerHTML='<form class="dlg" id="itemForm" novalidate><h2>'+(it?'Edit item':'New item')+'</h2>'+
+  d.innerHTML='<form class="dlg" id="itemForm" novalidate><div class="dlg-head"><h2>'+(it?'Edit item':'New item')+'</h2><button type="button" class="btn secondary small" data-action="close-dlg">Cancel</button></div>'+
     '<div class="form-grid">'+
-    '<div class="full photobox"><div class="frame big noph" id="photoPreview"></div><div class="pb-text"><b>Photo</b><p>Add a clear picture of the item. <b class="hint-desk">Drag one in, paste it, or choose one from your Photos.</b><b class="hint-phone">Take one now or choose one from your Photos.</b> HEIC, JPG, PNG, WebP and GIF all work.</p><div class="pb-btns"><button type="button" class="btn small only-phone" id="camBtn" data-action="take-photo">Take photo</button><button type="button" class="btn small" id="photoBtn" data-action="pick-photo"><span class="hint-desk">Add photo</span><span class="hint-phone">Choose photo</span></button><button type="button" class="btn small secondary" id="photoRm" data-action="remove-photo" hidden>Remove photo</button></div><div class="msg bad" id="m_photo" aria-live="polite"></div></div><input type="file" id="photoFile" accept="image/*,.heic,.heif" hidden><input type="file" id="photoCam" accept="image/*" capture="environment" hidden></div>'+
+    '<div class="full photobox"><button type="button" class="frame big noph" id="photoPreview" data-action="pick-photo" aria-label="Add photos"></button><div class="pb-text"><b>Photos</b><p>Add clear pictures of the item, up to '+MAXPHOTOS+'. The first one is the cover. <b class="hint-desk">Drag them in, paste them, or choose them. To pick more than one, hold ⌘ (Ctrl on Windows) and click each photo.</b><b class="hint-phone">Take several in a row, or choose several at once: tap each photo so it gets a checkmark, then tap Add.</b> HEIC, JPG, PNG, WebP and GIF all work.</p><ul class="pstrip" id="photoStrip" hidden></ul><p class="pcount" id="photoCount" aria-live="polite"></p><div class="pb-btns"><button type="button" class="btn small only-phone" id="camBtn" data-action="take-photo">Take photos</button><button type="button" class="btn small" id="photoBtn" data-action="pick-photo"><span class="hint-desk">Add photos</span><span class="hint-phone">Choose photos</span></button></div><div class="msg bad" id="m_photo" aria-live="polite"></div></div><input type="file" id="photoFile" accept="'+(PHONE?'image/*':'image/*,.heic,.heif')+'" multiple hidden><input type="file" id="photoCam" accept="image/*" capture="environment" hidden></div>'+
     '<div class="ff full"><label for="f_title">Name *</label><input type="text" id="f_title" maxlength="120" spellcheck="true" autocorrect="on" autocapitalize="sentences" placeholder="e.g. Wool coat, camel" value="'+esc(it?it.title:'')+'"><div class="msg bad" id="m_title" aria-live="polite"></div></div>'+
     '<div class="ff"><label for="f_cat">Category</label><select id="f_cat">'+opt(CATEGORIES,it?it.category:'Tops')+'</select></div>'+
     '<div class="ff"><label for="f_size">Size</label><select id="f_size">'+sizeOptions(it?it.category:'Tops',it?it.size:'')+'</select>'+

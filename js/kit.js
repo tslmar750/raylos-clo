@@ -53,13 +53,13 @@ function kitFields(it,plat){
 function openKit(id,plat,keep){
   var it=findItem(id); if(!it)return; if(!keep)kitStep=0; kitId=id; if(plat)kitPlat=plat; else if(KIT_PLATS.indexOf(kitPlat)<0)kitPlat='depop';
   if($('#itemDlg').open)$('#itemDlg').close();
-  var d=$('#kitDlg'), fs=kitFields(it,kitPlat), src=photoSrc(it), link=(it.links&&it.links[kitPlat])||'';
+  var d=$('#kitDlg'), fs=kitFields(it,kitPlat), src=photoSrc(it), nph=photoSrcs(it).length, link=(it.links&&it.links[kitPlat])||'';
   d.innerHTML='<div class="dlg"><div class="kit-head"><div class="frame'+(src?'':' noph')+'" style="width:64px">'+(src?'<img src="'+src+'" alt="">':'<img src="'+IMG[iconFor(it.category)]+'" alt="">')+'</div><div><h2>'+esc(it.title)+'</h2><p>Listing kit: copy each part, paste it into the platform.</p></div></div>'+
     '<div class="subtabs ktabs" role="tablist">'+KIT_PLATS.map(function(k){return '<button type="button" data-action="kit-plat" data-p="'+k+'" aria-pressed="'+(kitPlat===k)+'">'+PLAT[k].name+(posted(it).indexOf(k)>=0?' ✓':'')+'</button>'}).join('')+'</div>'+
     fs.map(function(f){return (f.group?'<p class="kgroup">'+f.group+'</p>':'')+'<div class="kfield" data-k="'+f.k+'"><div class="khead"><b>'+f.label+'</b><button type="button" class="btn small secondary" data-action="kit-copy" data-k="'+f.k+'">Copy</button></div><textarea id="kit_'+f.k+'" spellcheck="true" autocorrect="on" autocapitalize="sentences" rows="'+f.rows+'" aria-label="'+f.label+'">'+esc(f.val)+'</textarea>'+(f.k==='title'&&kitPlat==='ebay'?'<div class="kcount" id="kit_count"></div>':'')+'</div>'}).join('')+
     '<div class="kprice"><div><b>Price</b><span>'+(fs.price?money(fs.price):'Not set yet')+'</span></div><small>'+(fs.price?'You type this in on the platform, so there is nothing to copy.':'Add a price to the item first. <button type="button" class="linkbtn" data-action="edit-item" data-id="'+esc(it.id)+'">Fill it in</button>')+'</small></div>'+
     '<p class="kempty">Category, condition, color and the other dropdowns: pick those on the platform.</p>'+
-    '<div class="kfield kphoto"><span>'+(src?'Photo ready':'No photo yet. Add one with Edit.')+'</span>'+(src?'<button type="button" class="btn small secondary" data-action="kit-photo">Save or share photo</button>':'')+'</div>'+
+    '<div class="kfield kphoto"><span>'+(src?(nph>1?nph+' photos ready':'Photo ready'):'No photo yet. Add one with Edit.')+'</span>'+(src?'<button type="button" class="btn small secondary" data-action="kit-photo">'+(nph>1?'Save or share photos':'Save or share photo')+'</button>':'')+'</div>'+
     '<div class="kopen">'+(PLAT_URL[kitPlat]?'<a class="btn" href="'+PLAT_URL[kitPlat]+'" target="_blank" rel="noopener noreferrer">Open '+PLAT[kitPlat].name+' ↗</a>':'')+'<p>'+(SELL_HINT[kitPlat]||'Open '+esc(PLAT[kitPlat].name)+' and start a new listing.')+'</p></div>'+
     '<div class="kopen" style="margin:6px 0"><button type="button" class="btn" data-action="kit-posted">I posted it on '+PLAT[kitPlat].name+' ✓</button><p>Tap this after you post, with or without a link. It remembers where the item is listed, so you get a delist reminder later.</p></div>'+
     '<div class="klink"><label for="kit_link"><b style="font-size:14px">After you post: paste the listing link</b></label><div class="row"><input type="text" id="kit_link" placeholder="'+(PLAT[kitPlat].domain?'https://'+PLAT[kitPlat].domain+'/…':'Paste the link')+'" value="'+esc(link)+'" autocomplete="off"><button type="button" class="btn small" data-action="kit-save-link">Save link</button></div><div class="msg" id="kit_msg" aria-live="polite"></div></div>'+
@@ -95,12 +95,14 @@ function kitAll(){var out=[],short=[];$all('#kitDlg .kfield[data-k]').forEach(fu
 function flashBtn(b,txt){var o=b.textContent;b.textContent=txt;setTimeout(function(){b.textContent=o},1400)}
 function kitCopy(text,btn){copyText(text).then(function(){flashBtn(btn,'Copied ✓')},function(){toast('Couldn’t copy. Press and hold the text to copy it.')})}
 function sharePhoto(it){
-  var src=photoSrc(it); if(!src)return;
-  fetch(src).then(function(r){return r.blob()}).then(function(b){
-    var file=new File([b],(it.title||'photo').replace(/[^a-z0-9]+/gi,'-')+'.jpg',{type:b.type||'image/jpeg'});
-    if(navigator.canShare&&navigator.canShare({files:[file]}))return navigator.share({files:[file],title:it.title}).catch(function(){});
-    var a=document.createElement('a');a.href=URL.createObjectURL(b);a.download=file.name;document.body.appendChild(a);a.click();a.remove();setTimeout(function(){URL.revokeObjectURL(a.href)},1500);toast('Photo saved to your downloads.');
-  }).catch(function(){toast('Couldn’t get that photo.')});
+  var srcs=photoSrcs(it); if(!srcs.length)return;
+  var base=(it.title||'photo').replace(/[^a-z0-9]+/gi,'-');
+  Promise.all(srcs.map(function(src){return fetch(src).then(function(r){return r.blob()})})).then(function(bs){
+    var files=bs.map(function(b,i){return new File([b],base+(bs.length>1?'-'+(i+1):'')+'.jpg',{type:b.type||'image/jpeg'})});
+    if(navigator.canShare&&navigator.canShare({files:files}))return navigator.share({files:files,title:it.title}).catch(function(){});
+    files.forEach(function(f,i){setTimeout(function(){var a=document.createElement('a');a.href=URL.createObjectURL(f);a.download=f.name;document.body.appendChild(a);a.click();a.remove();setTimeout(function(){URL.revokeObjectURL(a.href)},1500)},i*250)});
+    toast(files.length>1?files.length+' photos saved to your downloads.':'Photo saved to your downloads.');
+  }).catch(function(){toast('Couldn’t get the photos.')});
 }
 function kitAdvance(it,extra){
   var prev=kitPlat, nx='';

@@ -133,17 +133,17 @@ function cloudPhotoUp(id,blob){
   CLOUD.upping[id]=1;
   return sbAuthed('POST',cloudPhotoPath(id),{body:blob,headers:{'Content-Type':'image/jpeg','x-upsert':'true'}}).then(function(r){
     if(!r.ok)throw new Error('photo '+r.status);
-    var it=findItem(id); if(it&&it.photoCloud!==true){it.photoCloud=true;save()}
+    if(photoOwner(id)&&cloudFlag(id)!==true){setCloudFlag(id,true);save()}
   }).catch(function(e){cloudFail(e)}).then(function(){delete CLOUD.upping[id]});
 }
 function cloudPhotoDel(id){
   if(!CLOUD.on||!CLOUD.uid)return Promise.resolve();
-  var it=findItem(id); if(it&&it.photoCloud!==false){it.photoCloud=false;save()}
+  if(photoOwner(id)&&cloudFlag(id)!==false){setCloudFlag(id,false);save()}
   return sbAuthed('DELETE',cloudPhotoPath(id)).catch(function(){});
 }
 function cloudPhotoDown(id){
   return sbAuthed('GET','/storage/v1/object/authenticated/photos/'+CLOUD.uid+'/'+id+'.jpg').then(function(r){
-    if(r.status===404||r.status===400){var it=findItem(id);if(it&&it.photoCloud===true){it.photoCloud=false;save()}return false}
+    if(r.status===404||r.status===400){var o=photoOwner(id);if(o&&o.e){o.it.photos=o.it.photos.filter(function(p){return p.k!==id});save()}else if(o&&cloudFlag(id)===true){setCloudFlag(id,false);save()}return false}
     if(!r.ok)throw new Error('photo '+r.status);
     return r.blob().then(function(b){setPhoto(id,b);return photoPutLocal(id,b).catch(function(){}).then(function(){return true})});
   });
@@ -151,18 +151,24 @@ function cloudPhotoDown(id){
 function cloudPhotosSync(){
   if(!CLOUD.on||!CLOUD.uid)return Promise.resolve();
   var jobs=[];
+  var known={};
   state.items.forEach(function(it){
-    var local=!!PH[it.id];
-    if(it.photoCloud===true&&!local)jobs.push(cloudPhotoDown(it.id));
-    else if(it.photoCloud===undefined&&local&&!CLOUD.upping[it.id])jobs.push(photoGetLocal(it.id).then(function(b){return b?cloudPhotoUp(it.id,b):null}));
-    else if(it.photoCloud===false&&local&&!CLOUD.upping[it.id]){clearPhoto(it.id);jobs.push(photoDelLocal(it.id).catch(function(){}))}
+    [it.id].concat(extraKeys(it)).forEach(function(k){
+      known[k]=1; var local=!!PH[k], fl=cloudFlag(k);
+      if(fl===true&&!local)jobs.push(cloudPhotoDown(k));
+      else if(fl===undefined&&local&&!CLOUD.upping[k])jobs.push(photoGetLocal(k).then(function(b){return b?cloudPhotoUp(k,b):null}));
+      else if(fl===false&&local&&!CLOUD.upping[k]){clearPhoto(k);jobs.push(photoDelLocal(k).catch(function(){}))}
+    });
+    if(it.photos&&it.photos.some(function(p){return p.c===false})){it.photos=it.photos.filter(function(p){return p.c!==false});save()}
   });
+  // extra photos removed on another device
+  if(!photoMoving)Object.keys(PH).forEach(function(k){if(k.indexOf('_')>0&&!known[k]&&!CLOUD.upping[k]){clearPhoto(k);jobs.push(photoDelLocal(k).catch(function(){}))}});
   if(!jobs.length)return Promise.resolve();
   return Promise.all(jobs.map(function(p){return Promise.resolve(p).catch(function(){})})).then(function(){render()});
 }
 function cloudPhotosWipe(){
   if(!CLOUD.on||!CLOUD.uid)return;
-  state.items.forEach(function(it){if(it.photoCloud===true)sbAuthed('DELETE',cloudPhotoPath(it.id)).catch(function(){})});
+  state.items.forEach(function(it){if(it.photoCloud===true)sbAuthed('DELETE',cloudPhotoPath(it.id)).catch(function(){});(it.photos||[]).forEach(function(p){if(p.c===true)sbAuthed('DELETE',cloudPhotoPath(p.k)).catch(function(){})})});
 }
 /* ---- log in / create account / forgot password ---- */
 function loginSay(t,good){var e=$('#loginError');if(!e)return;e.textContent=t||'';e.style.color=good?'var(--brindle)':''}

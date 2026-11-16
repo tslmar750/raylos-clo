@@ -1,17 +1,18 @@
 /* FONTS: headings use Karumbi (open-source, OFL v1.1, assets/fonts/karumbi.woff, unmodified).
-   Body text uses Patrick Hand (OFL v1.1, Latin subset, assets/fonts/patrick-hand.woff2), sized
-   up 16% so its letters match the Open Sans the layout was designed around.
-   Special Elite (Apache 2.0) is also here as an alternative: point --body at 'Special Elite'
-   to switch. Its ascent/descent overrides keep letters centred in buttons and pills. */
+   Body text uses Menlo, the Mac terminal font, when the visitor has it. Everyone else gets
+   DejaVu Sans Mono (Bitstream Vera licence, see assets/fonts/dejavu-sans-mono-LICENSE.txt),
+   which Menlo is based on and which has identical metrics. Latin subset, regular + bold.
+   Scaled to 90% because monospace runs about 20% wider than the Open Sans the layout
+   was designed around. */
 @font-face{font-family:'Karumbi';src:url(../assets/fonts/karumbi.woff) format('woff');font-weight:400;font-style:normal;font-display:swap}
-@font-face{font-family:'Patrick Hand';src:url(../assets/fonts/patrick-hand.woff2) format('woff2');font-weight:400;font-style:normal;font-display:swap;size-adjust:116%}
-@font-face{font-family:'Special Elite';src:url(../assets/fonts/special-elite.woff2) format('woff2');font-weight:400;font-style:normal;font-display:swap;size-adjust:104%;ascent-override:105%;descent-override:30%}
+@font-face{font-family:'Body Mono';src:local('Menlo-Regular'),local('Menlo'),url(../assets/fonts/dejavu-sans-mono.woff) format('woff');font-weight:400;font-style:normal;font-display:swap;size-adjust:90%}
+@font-face{font-family:'Body Mono';src:local('Menlo-Bold'),url(../assets/fonts/dejavu-sans-mono-bold.woff) format('woff');font-weight:700;font-style:normal;font-display:swap;size-adjust:90%}
 
 :root{
   --bone:#F8F4E7; --lilac:#D3CBDE; --plum:#988AA4; --sage:#D1D8B7;
   --olive:#A8B378; --fawn:#C49D7F; --brindle:#71675B; --white:#FFFFFF;
   --line:#E3DCCB; --brindle-dark:#5C5348; --oat:#F0EBDB;
-  --body:'Patrick Hand',Arial,Helvetica,sans-serif;
+  --body:'Body Mono',Menlo,Consolas,'DejaVu Sans Mono',monospace;
   --head:'Karumbi',Georgia,'Times New Roman',serif;
   --topbar-h:60px;
 }

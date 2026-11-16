@@ -1,6 +1,7 @@
 @font-face{font-family:'Karumbi';src:url(../assets/fonts/karumbi.woff) format('woff');font-display:swap}
-@font-face{font-family:'Patrick Hand';src:url(../assets/fonts/patrick-hand.woff2) format('woff2');font-display:swap;size-adjust:116%}
-:root{--bone:#F8F4E7;--lilac:#D3CBDE;--sage:#D1D8B7;--brindle:#71675B;--white:#fff;--head:'Karumbi',Georgia,serif;--body:'Patrick Hand',Arial,sans-serif}
+@font-face{font-family:'Body Mono';src:local('Menlo-Regular'),local('Menlo'),url(../assets/fonts/dejavu-sans-mono.woff) format('woff');font-weight:400;font-display:swap;size-adjust:90%}
+@font-face{font-family:'Body Mono';src:local('Menlo-Bold'),url(../assets/fonts/dejavu-sans-mono-bold.woff) format('woff');font-weight:700;font-display:swap;size-adjust:90%}
+:root{--bone:#F8F4E7;--lilac:#D3CBDE;--sage:#D1D8B7;--brindle:#71675B;--white:#fff;--head:'Karumbi',Georgia,serif;--body:'Body Mono',Menlo,Consolas,monospace}
 *{box-sizing:border-box}
 html,body{margin:0;min-height:100%}
 body{background:#F8F4E7;background:var(--bone);color:#71675B;color:var(--brindle);font-family:var(--body);font-size:18px;line-height:1.5;letter-spacing:.023em;overflow-x:hidden}

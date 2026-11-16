@@ -1,12 +1,17 @@
 /* FONTS: headings use Karumbi (open-source, OFL v1.1, assets/fonts/karumbi.woff, unmodified).
-   Body text uses Open Sans (+23 spacing = 0.023em), loaded from Google Fonts. */
+   Body text uses Patrick Hand (OFL v1.1, Latin subset, assets/fonts/patrick-hand.woff2), sized
+   up 16% so its letters match the Open Sans the layout was designed around.
+   Special Elite (Apache 2.0) is also here as an alternative: point --body at 'Special Elite'
+   to switch. Its ascent/descent overrides keep letters centred in buttons and pills. */
 @font-face{font-family:'Karumbi';src:url(../assets/fonts/karumbi.woff) format('woff');font-weight:400;font-style:normal;font-display:swap}
+@font-face{font-family:'Patrick Hand';src:url(../assets/fonts/patrick-hand.woff2) format('woff2');font-weight:400;font-style:normal;font-display:swap;size-adjust:116%}
+@font-face{font-family:'Special Elite';src:url(../assets/fonts/special-elite.woff2) format('woff2');font-weight:400;font-style:normal;font-display:swap;size-adjust:104%;ascent-override:105%;descent-override:30%}
 
 :root{
   --bone:#F8F4E7; --lilac:#D3CBDE; --plum:#988AA4; --sage:#D1D8B7;
   --olive:#A8B378; --fawn:#C49D7F; --brindle:#71675B; --white:#FFFFFF;
   --line:#E3DCCB; --brindle-dark:#5C5348; --oat:#F0EBDB;
-  --body:'Open Sans',Arial,Helvetica,sans-serif;
+  --body:'Patrick Hand',Arial,Helvetica,sans-serif;
   --head:'Karumbi',Georgia,'Times New Roman',serif;
   --topbar-h:60px;
 }
